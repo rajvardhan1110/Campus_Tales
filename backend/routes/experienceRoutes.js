@@ -23,4 +23,15 @@ router.get("/admin/pending", protect, adminOnly, getPendingExperiences);
 router.put("/admin/approve/:id", protect, adminOnly, approveExperience);
 router.delete("/admin/delete/:id", protect, adminOnly, deleteExperience);
 
+// ===== Get posts of logged-in student =====
+router.get("/me", protect, async (req, res) => {
+  try {
+    const studentPosts = await Experience.find({ student: req.user.id }).populate("student", "name email");
+    res.json(studentPosts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 module.exports = router;
