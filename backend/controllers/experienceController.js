@@ -5,9 +5,9 @@ const Experience = require("../models/Experience");
 // @access Private (Student)
 exports.createExperience = async (req, res) => {
   try {
-    const { companyName, type, experienceText } = req.body;
+    const { companyName, type, experienceText, year } = req.body;
 
-    if (!companyName || !type || !experienceText) {
+    if (!companyName || !type || !experienceText || !year) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -16,14 +16,17 @@ exports.createExperience = async (req, res) => {
       companyName,
       type,
       experienceText,
+      year,
       status: "pending",
     });
 
     res.status(201).json(experience);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error creating experience:", error); // log full error
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 // @desc Get all approved experiences
 // @route GET /api/experience
@@ -94,17 +97,31 @@ exports.approveExperience = async (req, res) => {
   }
 };
 
-// @desc Delete experience (Admin)
-// @route DELETE /api/experience/admin/delete/:id
-// @access Admin
-exports.deleteExperience = async (req, res) => {
+// @desc Reject experience (Admin)
+// @route PUT /api/experience/admin/reject/:id
+exports.rejectExperience = async (req, res) => {
   try {
     const exp = await Experience.findById(req.params.id);
     if (!exp) return res.status(404).json({ message: "Experience not found" });
 
-    await exp.deleteOne();
-    res.json({ message: "Experience deleted" });
+    exp.status = "rejected";
+    await exp.save();
+    res.json({ message: "Experience rejected" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// @desc Get all experiences of logged-in student (any status)
+exports.getMyExperiences = async (req, res) => {
+  try {
+    const experiences = await Experience.find({ student: req.user.id })
+      .populate("student", "name email")
+      .sort({ createdAt: -1 });
+
+    res.json(experiences);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

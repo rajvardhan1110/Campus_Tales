@@ -14,13 +14,18 @@ const experienceSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Internship", "PPO"],
+      enum: ["Internship", "PPO", "Placement"],
       required: true,
     },
     experienceText: {
       type: String,
       required: [true, "Experience description is required"],
       minlength: 20,
+    },
+    year: {
+      type: String,
+      enum: ["1st", "2nd", "3rd", "4th"],
+      required: true,
     },
     status: {
       type: String,
