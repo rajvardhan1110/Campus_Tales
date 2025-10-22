@@ -8,6 +8,7 @@ import MyPosts from "./pages/MyPosts";
 import MyPostStatus from "./pages/MyPostStatus";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
+import CreateExperience from "./pages/CreateExperience";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -39,6 +40,7 @@ function App() {
 
         {/* Student Routes */}
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+        <Route path="/create" element={<RequireAuth><CreateExperience /></RequireAuth>} />
         <Route path="/dashboard/myposts" element={<RequireAuth><MyPosts /></RequireAuth>} />
         <Route path="/dashboard/mypoststatus" element={<RequireAuth><MyPostStatus /></RequireAuth>} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
