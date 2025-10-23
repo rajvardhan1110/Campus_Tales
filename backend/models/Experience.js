@@ -14,7 +14,7 @@ const experienceSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Internship", "PPO", "Placement"],
+      enum: ["Internship", "PPO", "Internship+Placement"],
       required: true,
     },
     experienceText: {
@@ -25,6 +25,19 @@ const experienceSchema = new mongoose.Schema(
     year: {
       type: String,
       enum: ["1st", "2nd", "3rd", "4th"],
+      required: true,
+    },
+    branch: {
+      type: String,
+      required: [true, "Branch is required"],
+    },
+    passoutYear: {
+      type: String,
+      required: [true, "Passout year is required"],
+    },
+    placementType: {
+      type: String,
+      enum: ["On-Campus", "Off-Campus"],
       required: true,
     },
     status: {

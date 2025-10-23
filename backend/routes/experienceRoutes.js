@@ -8,28 +8,19 @@ const {
   rejectExperience,
   getExperienceById,
   incrementViews,
-  getMyExperiences
+  getMyExperiences,
+  getMyPosts
   
 } = require("../controllers/experienceController");
 
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
+
+//experience routes 
+router.get("/me", protect, getMyPosts);
+router.get("/:id", protect, getExperienceById);
+
 // Student Routes
-router.get("/me", protect, async (req, res) => {
-  try {
-    const userId = req.user.id; // coming from protect middleware
-    const experiences = await Experience.find({ student: userId }).populate(
-      "student",
-      "name email year"
-    );
-    res.json(experiences); // make sure this is an array
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-
 router.post("/", protect, createExperience); // submit new experience
 router.get("/", getApprovedExperiences); // view all approved
 router.get("/:id", getExperienceById); // view single experience

@@ -5,9 +5,9 @@ const Experience = require("../models/Experience");
 // @access Private (Student)
 exports.createExperience = async (req, res) => {
   try {
-    const { companyName, type, experienceText, year } = req.body;
+    const { companyName, type, experienceText, year, branch, passoutYear, placementType } = req.body;
 
-    if (!companyName || !type || !experienceText || !year) {
+    if (!companyName || !type || !experienceText || !year || !branch || !passoutYear || !placementType) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -17,12 +17,15 @@ exports.createExperience = async (req, res) => {
       type,
       experienceText,
       year,
+      branch,
+      passoutYear,
+      placementType,
       status: "pending",
     });
 
     res.status(201).json(experience);
   } catch (error) {
-    console.error("Error creating experience:", error); // log full error
+    console.error("Error creating experience:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -123,5 +126,33 @@ exports.getMyExperiences = async (req, res) => {
     res.json(experiences);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+const getExperienceById = async (req, res) => {
+  try {
+    const exp = await Experience.findById(req.params.id).populate("student", "name email");
+    if (!exp) return res.status(404).json({ message: "Experience not found" });
+    res.json(exp);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getMyPosts = async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Correct query: student is stored as ObjectId
+    const posts = await Experience.find({ student: req.user.id })
+      .populate("student", "name email")
+      .sort({ createdAt: -1 });
+
+    res.json(posts);
+  } catch (err) {
+    console.error("Failed to fetch my posts:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

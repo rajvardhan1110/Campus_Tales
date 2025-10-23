@@ -9,6 +9,8 @@ import MyPostStatus from "./pages/MyPostStatus";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import CreateExperience from "./pages/CreateExperience";
+import ExperienceDetails from "./pages/ExperienceDetails";
+import AdminExperienceDetails from "./pages/AdminExperienceDetails";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -38,16 +40,18 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+
         {/* Student Routes */}
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/create" element={<RequireAuth><CreateExperience /></RequireAuth>} />
+        <Route path="/experience/:id" element={<RequireAuth><ExperienceDetails /></RequireAuth>} />
         <Route path="/dashboard/myposts" element={<RequireAuth><MyPosts /></RequireAuth>} />
         <Route path="/dashboard/mypoststatus" element={<RequireAuth><MyPostStatus /></RequireAuth>} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
 
         {/* Admin Routes */}
         <Route path="/admin-dashboard" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
-
+        <Route path="/admin/experience/:id" element={<RequireAdmin><AdminExperienceDetails /></RequireAdmin>}/>
         {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
