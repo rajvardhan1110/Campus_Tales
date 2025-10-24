@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios"; // <-- Import axios
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+
+// --- New InfoTag Component ---
+const InfoTag = ({ label, value }) => (
+  <span className="inline-block bg-blue-50 text-blue-800 text-sm font-medium px-4 py-2 rounded-full">
+    <strong>{label}:</strong> {value || 'N/A'}
+  </span>
+);
 
 const ExperienceDetails = () => {
   const { id } = useParams();
@@ -11,77 +19,109 @@ const ExperienceDetails = () => {
   const [experience, setExperience] = useState(null);
   const token = localStorage.getItem("token");
 
-  const fetchExperience = async () => {
+  // --- REFACTORED WITH AXIOS & USECALLBACK ---
+  const fetchExperience = useCallback(async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/experience/${id}`, {
+      const response = await axios.get(`http://localhost:3000/api/experience/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch experience");
-      const data = await res.json();
-      setExperience(data);
+      setExperience(response.data); // Data is directly on response.data
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch experience:", err);
+      if (err.response && err.response.status === 404) {
+        alert("Experience not found.");
+        navigate('/dashboard'); // Redirect if not found
+      }
     }
-  };
+  }, [id, token, navigate]); // Added dependencies
 
   useEffect(() => {
     fetchExperience();
-  }, [id]);
+  }, [fetchExperience]); // Use fetchExperience as dependency
 
+  // --- New Attractive Loading State ---
   if (!experience) {
     return (
-      <div className="flex h-screen items-center justify-center text-gray-600">
-        Loading experience details...
+      <div className="flex h-screen bg-gray-50 text-gray-800">
+        <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        {/* Main content area with sliding logic */}
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${
+            sidebarOpen ? 'md:pl-60' : 'md:pl-20'
+        }`}>
+          <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+          <main className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
+            <div className="text-gray-600 text-xl font-medium">
+              Loading experience details...
+            </div>
+          </main>
+          <Footer />
+        </div>
       </div>
     );
   }
 
+  // --- Main Component Render ---
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-800 text-gray-800 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 text-gray-800">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-      <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
+      {/* --- Main Content Area (with sliding logic) --- */}
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+          sidebarOpen ? 'md:pl-60' : 'md:pl-20'
+      }`}>
         <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-        <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-gray-200">
-            {/* Company Header */}
+        {/* --- Attractive Page Content --- */}
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 sm:p-12">
+            
+            {/* --- Company Header --- */}
             <div className="text-center mb-8 break-words">
-              <h1 className="text-4xl font-extrabold text-indigo-700 mb-2 leading-tight">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2 leading-tight">
                 {experience.companyName}
               </h1>
-              <p className="text-gray-500 text-sm">
+              <p className="text-lg text-gray-600 mt-2">
+                Shared by <span className="font-semibold text-blue-600">{experience.student?.name || 'N/A'}</span>
+              </p>
+              <p className="text-gray-500 text-sm mt-1">
                 Uploaded on {new Date(experience.createdAt).toLocaleDateString()}
               </p>
             </div>
 
-            {/* Info Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-y py-4">
-              <Meta label="Student Name" value={experience.student?.name} />
-              <Meta label="Branch" value={experience.branch} />
-              <Meta label="Year" value={experience.year} />
-              <Meta label="Passout Year" value={experience.passoutYear} />
-              <Meta label="Company Type" value={experience.type} />
-              <Meta label="Placement Type" value={experience.placementType} />
+            {/* --- Info Tags --- */}
+            <div className="flex flex-wrap justify-center gap-3 border-y border-gray-200 py-6 my-8">
+              <InfoTag label="Branch" value={experience.branch} />
+              <InfoTag label="Year" value={experience.year} />
+              <InfoTag label="Passout" value={experience.passoutYear} />
+              <InfoTag label="Type" value={experience.type} />
+              <InfoTag label="Placement" value={experience.placementType} />
             </div>
 
-            {/* Experience Content */}
+            {/* --- Experience Content --- */}
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold text-gray-700 mb-3">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                 Experience Details
               </h2>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-gray-700 whitespace-pre-line leading-relaxed break-words overflow-hidden">
+              {/* Preserves formatting from the textarea */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 whitespace-pre-line leading-relaxed break-words overflow-hidden">
                 {experience.experienceText}
               </div>
             </div>
 
-            {/* Back Button */}
-            <div className="flex justify-center mt-8">
+            {/* --- Attractive Back Button --- */}
+            <div className="flex justify-center mt-10">
               <button
-                onClick={() => navigate(-1)}
-                className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg hover:bg-gradient-to-r hover:from-indigo-300 hover:via-purple-300 hover:to-pink-300 hover:text-black transition font-medium"
+                onClick={() => navigate(-1)} // navigate(-1) goes to the previous page
+                className="flex items-center justify-center gap-2
+                           px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-md
+                           transform transition-all duration-300 
+                           hover:bg-gray-200 hover:-translate-y-0.5 hover:shadow-lg
+                           active:scale-95"
               >
-                Back
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Go Back
               </button>
             </div>
           </div>
@@ -92,13 +132,5 @@ const ExperienceDetails = () => {
     </div>
   );
 };
-
-// Meta field component
-const Meta = ({ label, value }) => (
-  <p className="text-gray-700 text-sm sm:text-base break-words">
-    <span className="font-medium text-indigo-600">{label}:</span>{" "}
-    {value || "N/A"}
-  </p>
-);
 
 export default ExperienceDetails;

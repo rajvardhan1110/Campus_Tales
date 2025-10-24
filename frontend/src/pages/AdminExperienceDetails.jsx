@@ -1,181 +1,210 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios"; // <-- Import axios
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+
+// --- Icons ---
+const IconApprove = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+const IconReject = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+const IconDashboard = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+
+// --- Helper Components ---
+const InfoTag = ({ label, value }) => (
+  <span className="inline-block bg-gray-100 text-gray-800 text-sm font-medium px-4 py-2 rounded-full">
+    <strong>{label}:</strong> {value || 'N/A'}
+  </span>
+);
+
+const StatusBadge = ({ status }) => {
+  const styles = {
+    approved: "bg-green-100 text-green-800",
+    rejected: "bg-red-100 text-red-800",
+    pending: "bg-yellow-100 text-yellow-800",
+  };
+  return (
+    <span className={`inline-block text-sm font-bold uppercase px-4 py-1.5 rounded-full ${styles[status] || styles.pending}`}>
+      {status}
+    </span>
+  );
+};
 
 const AdminExperienceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [experience, setExperience] = useState(null);
+  const [loading, setLoading] = useState(true); // <-- Added loading state
+  const [isUpdating, setIsUpdating] = useState(false); // <-- Added button loading state
   const token = localStorage.getItem("token");
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // Fetch one experience by ID
-  const fetchExperience = async () => {
+  // --- REFACTORED: Fetch one experience by ID ---
+  const fetchExperience = useCallback(async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/admin/experience/${id}`, {
+      setLoading(true);
+      const res = await axios.get(`http://localhost:3000/api/admin/experience/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      setExperience(data);
+      setExperience(res.data);
     } catch (err) {
       console.error("Error fetching experience:", err);
+      alert("Failed to fetch experience details.");
+      navigate("/admin-dashboard");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [id, token, navigate]);
 
-  // Approve
-  const approveExperience = async () => {
+  // --- REFACTORED: Combined Approve/Reject logic ---
+  const handleUpdate = async (action) => {
+    const url =
+      action === "approve"
+        ? `http://localhost:3000/api/admin/experience/approve/${id}`
+        : `http://localhost:3000/api/admin/experience/reject/${id}`;
+    
+    setIsUpdating(true);
     try {
-      await fetch(`http://localhost:3000/api/admin/experience/approve/${id}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("Experience approved!");
+      await axios.put(url, {}, { headers: { Authorization: `Bearer ${token}` } });
+      alert(`Experience ${action}d!`);
       navigate("/admin-dashboard");
     } catch (err) {
       console.error(err);
-    }
-  };
-
-  // Reject
-  const rejectExperience = async () => {
-    try {
-      await fetch(`http://localhost:3000/api/admin/experience/reject/${id}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("Experience rejected!");
-      navigate("/admin-dashboard");
-    } catch (err) {
-      console.error(err);
+      alert(`Failed to ${action} experience.`);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   useEffect(() => {
     fetchExperience();
-  }, []);
+  }, [fetchExperience]); // Use fetchExperience as dependency
 
-  if (!experience)
+  // --- Attractive Loading State ---
+  if (loading || !experience) {
     return (
-      <div className="flex items-center justify-center h-screen text-gray-600">
-        Loading...
+      <div className="flex h-screen bg-gray-50 text-gray-800">
+        <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${
+            sidebarOpen ? 'md:pl-60' : 'md:pl-20'
+        }`}>
+          <Header toggleSidebar={toggleSidebar} />
+          <main className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
+            <div className="text-gray-600 text-xl font-medium">
+              Loading...
+            </div>
+          </main>
+          <Footer />
+        </div>
       </div>
     );
+  }
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-700 text-gray-800 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 text-gray-800">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className="flex-1 flex flex-col">
+      
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+          sidebarOpen ? 'md:pl-60' : 'md:pl-20'
+      }`}>
         <Header toggleSidebar={toggleSidebar} />
 
-        <div className="p-6 flex flex-col items-center overflow-y-auto">
-          <div className="bg-white shadow-lg rounded-2xl w-full max-w-5xl p-8 border-t-4 border-indigo-600">
-            {/* Company & Placement Info */}
-            <h1 className="text-3xl font-bold text-center text-indigo-700 mb-2">
-              {experience.companyName}
-            </h1>
-            <p className="text-center text-gray-500 mb-6">
-              {experience.type} • {experience.placementType || "N/A"}
-            </p>
-
-            {/* Card Metadata */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-gray-700">
-              <p>
-                <span className="font-semibold text-indigo-600">Student:</span>{" "}
-                {experience.student?.name || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-indigo-600">Email:</span>{" "}
-                {experience.student?.email || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-indigo-600">Branch:</span>{" "}
-                {experience.branch || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-indigo-600">Year:</span>{" "}
-                {experience.year || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-indigo-600">Passout Year:</span>{" "}
-                {experience.passoutYear || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-indigo-600">Status:</span>{" "}
-                <span
-                  className={
-                    experience.status === "approved"
-                      ? "text-green-600 font-semibold"
-                      : experience.status === "rejected"
-                      ? "text-red-600 font-semibold"
-                      : "text-yellow-600 font-semibold"
-                  }
-                >
-                  {experience.status}
-                </span>
-              </p>
+        {/* --- Attractive Page Content --- */}
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 sm:p-12">
+            
+            {/* --- Company Header & Status --- */}
+            <div className="text-center mb-8 break-words">
+              <h1 className="text-4xl font-bold text-gray-900 mb-3 leading-tight">
+                {experience.companyName}
+              </h1>
+              <StatusBadge status={experience.status} />
             </div>
 
-            {/* Experience Text */}
-            <div
-              className={`bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6 ${
-                experience.status !== "pending" ? "overflow-x-hidden" : ""
-              }`}
-            >
-              <h2 className="text-lg font-semibold text-indigo-600 mb-2">
-                Experience Description
+            {/* --- Info Tags --- */}
+            <div className="flex flex-wrap justify-center gap-3 border-y border-gray-200 py-6 my-8">
+              <InfoTag label="Student" value={experience.student?.name} />
+              <InfoTag label="Email" value={experience.student?.email} />
+              <InfoTag label="Branch" value={experience.branch} />
+              <InfoTag label="Year" value={experience.year} />
+              <InfoTag label="Passout" value={experience.passoutYear} />
+              <InfoTag label="Type" value={experience.type} />
+              <InfoTag label="Placement" value={experience.placementType} />
+            </div>
+
+            {/* --- Experience Content --- */}
+            <div className="mt-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Experience Details
               </h2>
-              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 whitespace-pre-line leading-relaxed break-words overflow-hidden">
                 {experience.experienceText || "No description provided"}
-              </p>
+              </div>
             </div>
-
-            {/* Skills / Tools */}
+            
+            {/* Skills / Tools (if they exist) */}
             {experience.skills && (
-              <div
-                className={`bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6 ${
-                  experience.status !== "pending" ? "overflow-x-hidden" : ""
-                }`}
-              >
-                <h2 className="text-lg font-semibold text-indigo-600 mb-2">
-                  Skills / Tools Used
+              <div className="mt-6">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Skills / Tools
                 </h2>
-                <p className="text-gray-700">{experience.skills}</p>
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 whitespace-pre-line leading-relaxed break-words overflow-hidden">
+                  {experience.skills}
+                </div>
               </div>
             )}
 
-            {/* Approve / Reject Buttons */}
+            {/* --- Approve / Reject Buttons --- */}
             {experience.status === "pending" && (
-              <div className="flex justify-center gap-4 mt-6">
+              <div className="flex justify-center gap-4 mt-10 border-t border-gray-200 pt-8">
                 <button
-                  onClick={approveExperience}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  onClick={() => handleUpdate("approve")}
+                  disabled={isUpdating}
+                  className="flex items-center justify-center gap-2 w-full sm:w-auto
+                             px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-lg
+                             transform transition-all duration-300 
+                             hover:bg-green-700 hover:-translate-y-1 hover:shadow-xl
+                             active:scale-95
+                             disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Approve
+                  <IconApprove />
+                  {isUpdating ? "Approving..." : "Approve"}
                 </button>
                 <button
-                  onClick={rejectExperience}
-                  className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  onClick={() => handleUpdate("reject")}
+                  disabled={isUpdating}
+                  className="flex items-center justify-center gap-2 w-full sm:w-auto
+                             px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-lg
+                             transform transition-all duration-300 
+                             hover:bg-red-700 hover:-translate-y-1 hover:shadow-xl
+                             active:scale-95
+                             disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Reject
+                  <IconReject />
+                  {isUpdating ? "Rejecting..." : "Reject"}
                 </button>
               </div>
             )}
 
-            {/* Go to Dashboard Button */}
-            <div className="flex justify-center mt-6">
+            {/* --- Go to Dashboard Button --- */}
+            <div className={`flex justify-center ${experience.status === 'pending' ? 'mt-6' : 'mt-10 border-t border-gray-200 pt-8'}`}>
               <button
                 onClick={() => navigate("/admin-dashboard")}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                disabled={isUpdating}
+                className="flex items-center justify-center gap-2
+                           px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-md
+                           transform transition-all duration-300 
+                           hover:bg-gray-200 hover:-translate-y-0.5 hover:shadow-lg
+                           active:scale-95"
               >
-                Go to Dashboard
+                <IconDashboard />
+                Back to Dashboard
               </button>
             </div>
           </div>
-        </div>
+        </main>
 
         <Footer />
       </div>
