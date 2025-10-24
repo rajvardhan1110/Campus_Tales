@@ -50,106 +50,107 @@ const CreateExperience = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-xl shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Create Experience</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="companyName"
-          placeholder="Company Name"
-          value={formData.companyName}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-2">
+  <div className="w-full h-full max-w-6xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-md">
+    <h2 className="text-2xl font-semibold mb-4 text-center">Create Experience</h2>
+    <form onSubmit={handleSubmit} className="space-y-3">
+      <input
+        name="companyName"
+        placeholder="Company Name"
+        value={formData.companyName}
+        onChange={handleChange}
+        className="border p-2 w-full"
+        required
+      />
 
-        <select
-          name="year"
-          value={formData.year}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        >
-          <option value="">Select Year</option>
-          <option value="1st">1st Year</option>
-          <option value="2nd">2nd Year</option>
-          <option value="3rd">3rd Year</option>
-          <option value="4th">4th Year</option>
-        </select>
+      <select
+        name="year"
+        value={formData.year}
+        onChange={handleChange}
+        className="border p-2 w-full"
+        required
+      >
+        <option value="">Select Year</option>
+        <option value="1st">1st Year</option>
+        <option value="2nd">2nd Year</option>
+        <option value="3rd">3rd Year</option>
+        <option value="4th">4th Year</option>
+      </select>
 
-        <select
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        >
-          <option value="">Select Type</option>
-          <option value="Internship">Internship</option>
-          <option value="PPO">PPO</option>
-          <option value="Internship+Placement">InternshipPlacement</option>
-        </select>
+      <select
+        name="type"
+        value={formData.type}
+        onChange={handleChange}
+        className="border p-2 w-full"
+        required
+      >
+        <option value="">Select Type</option>
+        <option value="Internship">Internship</option>
+        <option value="PPO">PPO</option>
+        <option value="Internship+Placement">Internship+Placement</option>
+      </select>
 
-        <select
-          name="branch"
-          value={formData.branch}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        >
-          <option value="">Select Branch</option>
-          <option value="Civil Engineering">Civil Engineering</option>
-          <option value="Mechanical Engineering">Mechanical Engineering</option>
-          <option value="Electrical Engineering">Electrical Engineering</option>
-          <option value="Electronics Engineering">Electronics Engineering</option>
-          <option value="Computer Science Engineering">Computer Science Engineering</option>
-          <option value="Information Technology">Information Technology</option>
-          <option value="Robotics">Robotics</option>
-          <option value="AI/ML">AI/ML</option>
-        </select>
+      <select
+        name="branch"
+        value={formData.branch}
+        onChange={handleChange}
+        className="border p-2 w-full"
+        required
+      >
+        <option value="">Select Branch</option>
+        <option value="Civil Engineering">Civil Engineering</option>
+        <option value="Mechanical Engineering">Mechanical Engineering</option>
+        <option value="Electrical Engineering">Electrical Engineering</option>
+        <option value="Electronics Engineering">Electronics Engineering</option>
+        <option value="Computer Science Engineering">Computer Science Engineering</option>
+        <option value="Information Technology">Information Technology</option>
+        <option value="Robotics">Robotics</option>
+        <option value="AI/ML">AI/ML</option>
+      </select>
 
-        <input
-          name="passoutYear"
-          type="number"
-          placeholder="Passout Year"
-          min="1951"
-          max={currentYear + 4}
-          value={formData.passoutYear}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        />
+      <input
+        name="passoutYear"
+        type="number"
+        placeholder="Passout Year"
+        min="1951"
+        max={currentYear + 4}
+        value={formData.passoutYear}
+        onChange={handleChange}
+        className="border p-2 w-full"
+        required
+      />
 
-        <select
-          name="placementType"
-          value={formData.placementType}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        >
-          <option value="">Select Placement Type</option>
-          <option value="On-Campus">On-Campus</option>
-          <option value="Off-Campus">Off-Campus</option>
-        </select>
+      <select
+        name="placementType"
+        value={formData.placementType}
+        onChange={handleChange}
+        className="border p-2 w-full"
+        required
+      >
+        <option value="">Select Placement Type</option>
+        <option value="On-Campus">On-Campus</option>
+        <option value="Off-Campus">Off-Campus</option>
+      </select>
 
-        <textarea
-          name="experienceText"
-          placeholder="Describe your experience..."
-          value={formData.experienceText}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        />
+      <textarea
+  name="experienceText"
+  placeholder="Describe your experience..."
+  value={formData.experienceText}
+  onChange={handleChange}
+  className="border p-2 w-full h-32 resize-none overflow-y-auto"
+  required
+/>
 
-        <button
-          type="submit"
-          className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg hover:bg-gradient-to-r hover:from-indigo-300 hover:via-purple-300 hover:to-pink-300 hover:text-black transition font-medium px-4 py-2 rounded"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
-    </div>
+      <button
+        type="submit"
+        className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-indigo-300 hover:via-purple-300 hover:to-pink-300 hover:text-black transition font-medium w-full"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+
   );
 };
 

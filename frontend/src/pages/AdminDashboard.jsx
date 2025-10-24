@@ -228,7 +228,54 @@ const AdminDashboard = () => {
 
         {/* Experiences List */}
         <div className="p-5 flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredExperiences.length === 0 && <p>No posts found.</p>}
+          {filteredExperiences.length === 0 ? (
+  <div className="flex items-center justify-center col-span-full h-[60vh]">
+    <div className="text-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-10 py-8 rounded-2xl shadow-lg">
+      <h2 className="text-2xl font-semibold mb-2">No Posts Found</h2>
+      <p className="text-sm opacity-90">
+        Try adjusting your filters or check back later.
+      </p>
+    </div>
+  </div>
+) : (
+  filteredExperiences.map((post) => {
+    const statusColor =
+      post.status === "approved"
+        ? "bg-green-100 border-green-500 text-green-800"
+        : post.status === "rejected"
+        ? "bg-red-100 border-red-500 text-red-800"
+        : "bg-yellow-100 border-yellow-500 text-yellow-800";
+
+    return (
+      <div
+        key={post._id}
+        onClick={() => navigate(`/admin/experience/${post._id}`)}
+        className={`p-5 rounded-lg shadow flex flex-col justify-between border-l-4 ${statusColor} cursor-pointer hover:shadow-lg hover:-translate-y-1 transition`}
+      >
+        <p className="text-gray-700 mb-1">
+          <span className="font-semibold text-gray-800">Student:</span>{" "}
+          {post.student.name} ({post.student.email})
+        </p>
+        <p className="text-gray-700 mb-1">
+          <span className="font-semibold text-gray-800">Branch:</span>{" "}
+          {post.branch || "N/A"}
+        </p>
+        <p className="text-gray-700 mb-1">
+          <span className="font-semibold text-gray-800">Passout Year:</span>{" "}
+          {post.passoutYear || "N/A"}
+        </p>
+        <p className="font-bold text-xl text-indigo-600 mb-2">
+          {post.companyName}
+        </p>
+        <p className="text-gray-700 mt-auto">
+          <strong>Type:</strong> {post.type} | <strong>Year:</strong>{" "}
+          {post.year || "N/A"} | <strong>Status:</strong> {post.status}
+        </p>
+      </div>
+    );
+  })
+)}
+
 
           {filteredExperiences.map((post) => {
             const statusColor =
