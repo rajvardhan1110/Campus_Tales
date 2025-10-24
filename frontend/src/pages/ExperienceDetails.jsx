@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios"; // <-- Import axios
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-// --- New InfoTag Component ---
+// --- InfoTag Component ---
 const InfoTag = ({ label, value }) => (
-  <span className="inline-block bg-blue-50 text-blue-800 text-sm font-medium px-4 py-2 rounded-full">
+  <span className="inline-block bg-blue-50 text-blue-800 text-sm font-medium px-4 py-2 rounded-full
+                   transition-all duration-300 hover:bg-blue-100">
     <strong>{label}:</strong> {value || 'N/A'}
   </span>
 );
@@ -19,32 +20,30 @@ const ExperienceDetails = () => {
   const [experience, setExperience] = useState(null);
   const token = localStorage.getItem("token");
 
-  // --- REFACTORED WITH AXIOS & USECALLBACK ---
   const fetchExperience = useCallback(async () => {
     try {
       const response = await axios.get(`http://localhost:3000/api/experience/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setExperience(response.data); // Data is directly on response.data
+      setExperience(response.data);
     } catch (err) {
       console.error("Failed to fetch experience:", err);
       if (err.response && err.response.status === 404) {
         alert("Experience not found.");
-        navigate('/dashboard'); // Redirect if not found
+        navigate('/dashboard');
       }
     }
-  }, [id, token, navigate]); // Added dependencies
+  }, [id, token, navigate]);
 
   useEffect(() => {
     fetchExperience();
-  }, [fetchExperience]); // Use fetchExperience as dependency
+  }, [fetchExperience]);
 
-  // --- New Attractive Loading State ---
+  // --- Loading State ---
   if (!experience) {
     return (
-      <div className="flex h-screen bg-gray-50 text-gray-800">
+      <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        {/* Main content area with sliding logic */}
         <div className={`flex-1 flex flex-col transition-all duration-300 ${
             sidebarOpen ? 'md:pl-60' : 'md:pl-20'
         }`}>
@@ -60,30 +59,31 @@ const ExperienceDetails = () => {
     );
   }
 
-  // --- Main Component Render ---
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-800">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-      {/* --- Main Content Area (with sliding logic) --- */}
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
           sidebarOpen ? 'md:pl-60' : 'md:pl-20'
       }`}>
         <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-        {/* --- Attractive Page Content --- */}
         <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 sm:p-12">
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 sm:p-12
+                         transition-all duration-300 ease-out">
             
             {/* --- Company Header --- */}
             <div className="text-center mb-8 break-words">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2 leading-tight">
-                {experience.companyName}
+              <h1 className="text-4xl font-bold text-gray-900 mb-2 leading-tight
+                            transform transition-all duration-300">
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {experience.companyName}
+                </span>
               </h1>
-              <p className="text-lg text-gray-600 mt-2">
+              <p className="text-lg text-gray-600 mt-2 transition-all duration-300 hover:text-gray-700">
                 Shared by <span className="font-semibold text-blue-600">{experience.student?.name || 'N/A'}</span>
               </p>
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-gray-500 text-sm mt-1 transition-all duration-300 hover:text-gray-600">
                 Uploaded on {new Date(experience.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -99,29 +99,36 @@ const ExperienceDetails = () => {
 
             {/* --- Experience Content --- */}
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4
+                            transform transition-all duration-300">
                 Experience Details
               </h2>
-              {/* Preserves formatting from the textarea */}
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 whitespace-pre-line leading-relaxed break-words overflow-hidden">
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 
+                            whitespace-pre-line leading-relaxed break-words overflow-hidden
+                            transition-all duration-300 hover:bg-gray-100">
                 {experience.experienceText}
               </div>
             </div>
 
-            {/* --- Attractive Back Button --- */}
+            {/* --- Back Button --- */}
             <div className="flex justify-center mt-10">
               <button
-                onClick={() => navigate(-1)} // navigate(-1) goes to the previous page
-                className="flex items-center justify-center gap-2
-                           px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-md
-                           transform transition-all duration-300 
-                           hover:bg-gray-200 hover:-translate-y-0.5 hover:shadow-lg
+                onClick={() => navigate(-1)}
+                className="group flex items-center justify-center gap-2
+                           px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-lg 
+                           border border-gray-300 shadow-lg
+                           transition-all duration-300 ease-out
+                           hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-xl
+                           hover:border-gray-400
                            active:scale-95"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                     className="w-5 h-5 transition-transform duration-300 group-hover:scale-105">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                 </svg>
-                Go Back
+                <span className="transition-transform duration-300 group-hover:scale-105">
+                  Go Back
+                </span>
               </button>
             </div>
           </div>

@@ -1,18 +1,19 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios"; // <-- Import axios
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 // --- Icons ---
-const IconApprove = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-const IconReject = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-const IconDashboard = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+const IconApprove = () => <svg className="w-5 h-5 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+const IconReject = () => <svg className="w-5 h-5 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+const IconDashboard = () => <svg className="w-5 h-5 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
 
 // --- Helper Components ---
 const InfoTag = ({ label, value }) => (
-  <span className="inline-block bg-gray-100 text-gray-800 text-sm font-medium px-4 py-2 rounded-full">
+  <span className="inline-block bg-gray-100 text-gray-800 text-sm font-medium px-4 py-2 rounded-full
+                   transition-all duration-300 hover:bg-gray-200">
     <strong>{label}:</strong> {value || 'N/A'}
   </span>
 );
@@ -35,13 +36,12 @@ const AdminExperienceDetails = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [experience, setExperience] = useState(null);
-  const [loading, setLoading] = useState(true); // <-- Added loading state
-  const [isUpdating, setIsUpdating] = useState(false); // <-- Added button loading state
+  const [loading, setLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const token = localStorage.getItem("token");
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // --- REFACTORED: Fetch one experience by ID ---
   const fetchExperience = useCallback(async () => {
     try {
       setLoading(true);
@@ -58,7 +58,6 @@ const AdminExperienceDetails = () => {
     }
   }, [id, token, navigate]);
 
-  // --- REFACTORED: Combined Approve/Reject logic ---
   const handleUpdate = async (action) => {
     const url =
       action === "approve"
@@ -80,12 +79,11 @@ const AdminExperienceDetails = () => {
 
   useEffect(() => {
     fetchExperience();
-  }, [fetchExperience]); // Use fetchExperience as dependency
+  }, [fetchExperience]);
 
-  // --- Attractive Loading State ---
   if (loading || !experience) {
     return (
-      <div className="flex h-screen bg-gray-50 text-gray-800">
+      <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <div className={`flex-1 flex flex-col transition-all duration-300 ${
             sidebarOpen ? 'md:pl-60' : 'md:pl-20'
@@ -103,7 +101,7 @@ const AdminExperienceDetails = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-800">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
@@ -111,14 +109,17 @@ const AdminExperienceDetails = () => {
       }`}>
         <Header toggleSidebar={toggleSidebar} />
 
-        {/* --- Attractive Page Content --- */}
         <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 sm:p-12">
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 sm:p-12
+                         transition-all duration-300 ease-out">
             
             {/* --- Company Header & Status --- */}
             <div className="text-center mb-8 break-words">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3 leading-tight">
-                {experience.companyName}
+              <h1 className="text-4xl font-bold text-gray-900 mb-3 leading-tight
+                            transform transition-all duration-300">
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {experience.companyName}
+                </span>
               </h1>
               <StatusBadge status={experience.status} />
             </div>
@@ -136,10 +137,13 @@ const AdminExperienceDetails = () => {
 
             {/* --- Experience Content --- */}
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4
+                            transform transition-all duration-300">
                 Experience Details
               </h2>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 whitespace-pre-line leading-relaxed break-words overflow-hidden">
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 
+                            whitespace-pre-line leading-relaxed break-words overflow-hidden
+                            transition-all duration-300 hover:bg-gray-100">
                 {experience.experienceText || "No description provided"}
               </div>
             </div>
@@ -147,10 +151,13 @@ const AdminExperienceDetails = () => {
             {/* Skills / Tools (if they exist) */}
             {experience.skills && (
               <div className="mt-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4
+                              transform transition-all duration-300">
                   Skills / Tools
                 </h2>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 whitespace-pre-line leading-relaxed break-words overflow-hidden">
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-gray-800 
+                              whitespace-pre-line leading-relaxed break-words overflow-hidden
+                              transition-all duration-300 hover:bg-gray-100">
                   {experience.skills}
                 </div>
               </div>
@@ -162,28 +169,36 @@ const AdminExperienceDetails = () => {
                 <button
                   onClick={() => handleUpdate("approve")}
                   disabled={isUpdating}
-                  className="flex items-center justify-center gap-2 w-full sm:w-auto
-                             px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-lg
-                             transform transition-all duration-300 
-                             hover:bg-green-700 hover:-translate-y-1 hover:shadow-xl
+                  className="group flex items-center justify-center gap-2 w-full sm:w-auto
+                             px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white 
+                             font-semibold rounded-lg shadow-lg
+                             transition-all duration-300 ease-out
+                             hover:from-green-600 hover:to-green-700 hover:-translate-y-0.5 
+                             hover:shadow-xl
                              active:scale-95
-                             disabled:opacity-70 disabled:cursor-not-allowed"
+                             disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <IconApprove />
-                  {isUpdating ? "Approving..." : "Approve"}
+                  <span className="transition-transform duration-300 group-hover:scale-105">
+                    {isUpdating ? "Approving..." : "Approve"}
+                  </span>
                 </button>
                 <button
                   onClick={() => handleUpdate("reject")}
                   disabled={isUpdating}
-                  className="flex items-center justify-center gap-2 w-full sm:w-auto
-                             px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-lg
-                             transform transition-all duration-300 
-                             hover:bg-red-700 hover:-translate-y-1 hover:shadow-xl
+                  className="group flex items-center justify-center gap-2 w-full sm:w-auto
+                             px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white 
+                             font-semibold rounded-lg shadow-lg
+                             transition-all duration-300 ease-out
+                             hover:from-red-600 hover:to-red-700 hover:-translate-y-0.5 
+                             hover:shadow-xl
                              active:scale-95
-                             disabled:opacity-70 disabled:cursor-not-allowed"
+                             disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <IconReject />
-                  {isUpdating ? "Rejecting..." : "Reject"}
+                  <span className="transition-transform duration-300 group-hover:scale-105">
+                    {isUpdating ? "Rejecting..." : "Reject"}
+                  </span>
                 </button>
               </div>
             )}
@@ -193,14 +208,18 @@ const AdminExperienceDetails = () => {
               <button
                 onClick={() => navigate("/admin-dashboard")}
                 disabled={isUpdating}
-                className="flex items-center justify-center gap-2
-                           px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-md
-                           transform transition-all duration-300 
-                           hover:bg-gray-200 hover:-translate-y-0.5 hover:shadow-lg
+                className="group flex items-center justify-center gap-2
+                           px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-lg 
+                           border border-gray-300 shadow-lg
+                           transition-all duration-300 ease-out
+                           hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-xl
+                           hover:border-gray-400
                            active:scale-95"
               >
                 <IconDashboard />
-                Back to Dashboard
+                <span className="transition-transform duration-300 group-hover:scale-105">
+                  Back to Dashboard
+                </span>
               </button>
             </div>
           </div>

@@ -17,7 +17,7 @@ const CreateExperience = () => {
     placementType: "",
   });
   
-  const [loading, setLoading] = useState(false); // <-- Added loading state
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,11 +27,11 @@ const CreateExperience = () => {
     e.preventDefault();
     if (!token) return alert("Please login first");
     
-    setLoading(true); // <-- Set loading
+    setLoading(true);
 
     const passoutYear = parseInt(formData.passoutYear);
     if (passoutYear > currentYear + 4) {
-      setLoading(false); // <-- Unset loading
+      setLoading(false);
       return alert(`Passout year cannot be more than ${currentYear + 4}`);
     }
 
@@ -52,43 +52,46 @@ const CreateExperience = () => {
       console.error(err);
       alert(err.response?.data?.message || "Error submitting experience");
     } finally {
-      setLoading(false); // <-- Unset loading
+      setLoading(false);
     }
   };
   
-  // --- New attractive input/select styles ---
   const inputClass = `
-    w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg 
-    text-gray-900 placeholder-gray-400 
-    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    w-full px-4 py-3 bg-white border border-gray-300 rounded-lg 
+    text-gray-900 placeholder-gray-500 
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
     transition-all duration-300
+    hover:border-gray-400
   `;
   const labelClass = "block text-sm font-medium text-gray-700 mb-2";
 
   return (
-    // --- THEMED WRAPPER ---
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-50 p-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 overflow-hidden">
       
-      {/* --- Decorative Background Blobs --- */}
+      {/* Background Blobs */}
       <div 
         className="absolute top-1/4 -left-1/4 w-96 h-96 bg-blue-200 rounded-full 
-                   opacity-50 blur-3xl filter animate-pulse"
+                   opacity-40 blur-3xl filter animate-pulse"
       />
       <div 
         className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-purple-200 rounded-full 
-                   opacity-50 blur-3xl filter animate-pulse"
+                   opacity-40 blur-3xl filter animate-pulse"
         style={{ animationDelay: '2s' }}
       />
       
-      {/* --- Attractive Form Card --- */}
-      <div className="relative z-10 bg-white p-8 md:p-10 rounded-2xl shadow-2xl w-full max-w-4xl">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Share Your Experience
+      {/* Form Card */}
+      <div className="relative z-10 bg-white p-8 md:p-10 rounded-2xl shadow-xl w-full max-w-4xl
+                     transition-all duration-300 ease-out">
+        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center
+                      transform transition-all duration-300">
+          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Share Your Experience
+          </span>
         </h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* --- Grid Layout for inputs --- */}
+          {/* Grid Layout for inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Column 1 */}
             <div>
@@ -194,7 +197,7 @@ const CreateExperience = () => {
             </div>
           </div>
           
-          {/* --- Textarea (Full Width) --- */}
+          {/* Textarea (Full Width) */}
           <div>
             <label htmlFor="experienceText" className={labelClass}>Your Experience</label>
             <textarea
@@ -203,27 +206,32 @@ const CreateExperience = () => {
               placeholder="Describe your experience in detail... (e.g., rounds, questions asked, difficulty)"
               value={formData.experienceText}
               onChange={handleChange}
-              className={`${inputClass} h-40`} // Taller textarea
+              className={`${inputClass} h-40 resize-none`}
               rows="8"
               required
             />
           </div>
 
-          {/* --- Themed Submit Button --- */}
+          {/* Submit Button */}
           <button
             type="submit"
-            className="flex items-center justify-center w-full gap-2
-                       px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg
-                       transform transition-all duration-300 
-                       hover:bg-blue-700 hover:-translate-y-1 hover:shadow-xl
+            className="group flex items-center justify-center w-full gap-2
+                       px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white 
+                       font-semibold rounded-lg shadow-lg
+                       transition-all duration-300 ease-out
+                       hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 
+                       hover:shadow-xl
                        active:scale-95
-                       disabled:opacity-70 disabled:cursor-not-allowed"
+                       disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
             disabled={loading}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                 className={`w-5 h-5 transition-transform duration-300 ${loading ? 'animate-spin' : 'group-hover:scale-105'}`}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            {loading ? "Submitting..." : "Submit Experience"}
+            <span className="transition-transform duration-300 group-hover:scale-105">
+              {loading ? "Submitting..." : "Submit Experience"}
+            </span>
           </button>
         </form>
       </div>

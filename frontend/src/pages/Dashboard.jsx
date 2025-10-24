@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-// --- New Icon Components for Inputs ---
+// --- Icon Components for Inputs ---
 const IconSearch = () => <svg className="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
 const IconSliders = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0M3.75 18H7.5m3-6h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0M3.75 12H7.5" /></svg>
 const IconCreate = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -15,7 +15,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [experiences, setExperiences] = useState([]);
-  const [showFilters, setShowFilters] = useState(false); // <-- State for filter toggle
+  const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     studentName: "", companyName: "", type: "", year: "",
     branch: "", passoutYear: "", placementType: "",
@@ -52,7 +52,6 @@ const Dashboard = () => {
     fetchExperiences();
   }, [fetchExperiences]);
 
-  // --- Dynamic Year/Branch options (unchanged) ---
   const currentYear = new Date().getFullYear();
   const passoutYears = Array.from({ length: 15 }, (_, i) => (currentYear - 10 + i).toString());
   const branches = [
@@ -60,7 +59,6 @@ const Dashboard = () => {
     "Computer Science Engineering", "Information Technology", "Robotics", "AI/ML",
   ];
   
-  // --- New attractive input field style ---
   const inputClass = `
     pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg 
     text-gray-900 placeholder-gray-400 
@@ -74,27 +72,29 @@ const Dashboard = () => {
   `
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-800">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
-      {/* --- Main Content Area --- */}
-      {/* Added md:pl-20 to account for the collapsed sidebar */}
       <div className={`flex-1 flex flex-col transition-all duration-300 ${
-  sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-}`}>
+          sidebarOpen ? 'md:pl-60' : 'md:pl-20'
+      }`}>
         <Header toggleSidebar={toggleSidebar} />
         
         <main className="flex-1 overflow-y-auto p-6">
           
           {/* --- Welcome Header & Create Button --- */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Welcome to your Dashboard</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Welcome to your Dashboard
+            </h2>
             <button
               onClick={() => navigate("/create")}
-              className="flex items-center justify-center gap-2
-                         px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg shadow-lg
-                         transform transition-all duration-300 
-                         hover:bg-blue-700 hover:-translate-y-1 hover:shadow-xl
+              className="group flex items-center justify-center gap-2
+                         px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white 
+                         font-semibold rounded-lg shadow-lg
+                         transition-all duration-300 ease-out
+                         hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 
+                         hover:shadow-xl
                          active:scale-95"
             >
               <IconCreate />
@@ -102,7 +102,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {/* --- Attractive Filters Section --- */}
+          {/* --- Filters Section --- */}
           <div className="p-4 bg-white rounded-xl shadow-lg mb-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Student Name Search */}
@@ -134,7 +134,8 @@ const Dashboard = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center justify-center gap-2 w-full px-4 py-2 
                            bg-gray-100 text-gray-700 font-medium rounded-lg shadow-sm
-                           hover:bg-gray-200 transition-all duration-300"
+                           transition-all duration-300
+                           hover:bg-gray-200 hover:shadow-md"
               >
                 <IconSliders />
                 {showFilters ? "Hide" : "Show"} All Filters
@@ -174,12 +175,11 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* --- Attractive Experiences Grid --- */}
+          {/* --- Experiences Grid --- */}
           <div className="relative">
             {experiences.length === 0 ? (
-              // --- "No Experiences" Card ---
               <div className="flex flex-col items-center justify-center 
-                            text-center bg-white shadow-2xl rounded-2xl p-10 
+                            text-center bg-white shadow-xl rounded-2xl p-10 
                             border border-gray-200"
               >
                 <IconNotFound />
@@ -191,16 +191,17 @@ const Dashboard = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {experiences.map((exp) => (
-                  // --- New Attractive Experience Card ---
                   <div
                     key={exp._id}
                     onClick={() => navigate(`/experience/${exp._id}`)}
-                    className="bg-white rounded-2xl shadow-xl overflow-hidden 
-                               transform transition-all duration-300 
-                               hover:shadow-2xl hover:-translate-y-1 cursor-pointer"
+                    className="group bg-white rounded-2xl shadow-lg overflow-hidden 
+                               transition-all duration-300 ease-out
+                               hover:shadow-xl
+                               cursor-pointer border border-gray-100 hover:border-gray-200"
                   >
                     {/* Card Header - Company Name */}
-                    <div className="p-5 border-b border-gray-200">
+                    <div className="p-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white
+                                  transition-all duration-300 group-hover:from-blue-50 group-hover:to-blue-100">
                       <h3 className="text-xl font-bold text-gray-900 truncate">
                         {exp.companyName || "N/A"}
                       </h3>
@@ -235,7 +236,8 @@ const Dashboard = () => {
                     </div>
                     
                     {/* Card Footer - Upload Date */}
-                    <div className="p-5 bg-gray-50 border-t border-gray-200">
+                    <div className="p-5 bg-gray-50 border-t border-gray-200
+                                  transition-all duration-300 group-hover:bg-gray-100">
                       <p className="text-xs text-gray-500">
                         Uploaded:{" "}
                         {exp.createdAt

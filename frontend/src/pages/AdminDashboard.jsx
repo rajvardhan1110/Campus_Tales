@@ -1,27 +1,33 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // <-- Import axios
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 // --- Icons for Stat Cards ---
-const IconTotalUsers = () => <svg className="w-8 h-8 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 00-12.728 0m12.728 0A9.094 9.094 0 015.636 18.72m12.728 0A9.094 9.094 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632zM15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-const IconTotalPosts = () => <svg className="w-8 h-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.75V16.5m-4.5-12.75V16.5m-4.5-12.75V16.5m0 4.5h13.5M3.75 7.5h13.5m-13.5 4.5h13.5m0 4.5h-13.5" /></svg>
-const IconApproved = () => <svg className="w-8 h-8 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-const IconPending = () => <svg className="w-8 h-8 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-const IconRejected = () => <svg className="w-8 h-8 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+const IconTotalUsers = () => <svg className="w-8 h-8 text-purple-500 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 00-12.728 0m12.728 0A9.094 9.094 0 015.636 18.72m12.728 0A9.094 9.094 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632zM15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+const IconTotalPosts = () => <svg className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.75V16.5m-4.5-12.75V16.5m-4.5-12.75V16.5m0 4.5h13.5M3.75 7.5h13.5m-13.5 4.5h13.5m0 4.5h-13.5" /></svg>
+const IconApproved = () => <svg className="w-8 h-8 text-green-500 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+const IconPending = () => <svg className="w-8 h-8 text-yellow-500 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+const IconRejected = () => <svg className="w-8 h-8 text-red-500 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
 const IconSearch = () => <svg className="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
 const IconSliders = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0M3.75 18H7.5m3-6h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0M3.75 12H7.5" /></svg>
 const IconNotFound = () => <svg className="w-16 h-16 text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m-1.125 0H6.625A2.25 2.25 0 004.5 4.875v11.25a2.25 2.25 0 002.25 2.25h10.5A2.25 2.25 0 0019.5 16.125v-1.5" /></svg>
 
 // --- Stat Card Component ---
 const StatCard = ({ title, value, icon }) => (
-  <div className="bg-white rounded-2xl shadow-xl p-6 flex items-center gap-4">
+  <div className="group bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4
+                  transition-all duration-300 ease-out
+                  hover:shadow-xl">
     <div className="flex-shrink-0">{icon}</div>
     <div>
-      <div className="text-3xl font-bold text-gray-900">{value || 0}</div>
-      <div className="text-sm font-medium text-gray-600">{title}</div>
+      <div className="text-3xl font-bold text-gray-900 transition-transform duration-300 group-hover:scale-105">
+        {value || 0}
+      </div>
+      <div className="text-sm font-medium text-gray-600 transition-all duration-300 group-hover:text-gray-800">
+        {title}
+      </div>
     </div>
   </div>
 );
@@ -41,7 +47,6 @@ const AdminDashboard = () => {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const navigate = useNavigate();
 
-  // --- Dynamic Year/Branch options (unchanged) ---
   const branches = [
     "Civil Engineering", "Mechanical Engineering", "Electrical", "Electronics",
     "Computer Science Engineering", "Information Technology", "Robotics", "AI/ML",
@@ -49,7 +54,6 @@ const AdminDashboard = () => {
   const currentYear = new Date().getFullYear();
   const passoutYears = Array.from({ length: 15 }, (_, i) => (currentYear - 10 + i).toString());
 
-  // --- REFACTORED: Fetching Data ---
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -76,13 +80,12 @@ const AdminDashboard = () => {
     setFilter({ ...filter, [e.target.name]: e.target.value });
   };
 
-  // --- Filter Logic ---
   const filteredExperiences = experiences.filter((exp) => {
     return (
       (filter.studentName ? exp.student?.name.toLowerCase().includes(filter.studentName.toLowerCase()) : true) &&
       (filter.companyName ? exp.companyName.toLowerCase().includes(filter.companyName.toLowerCase()) : true) &&
       (filter.type ? exp.type === filter.type : true) &&
-      (filter.year ? exp.student?.year === filter.year : true) && // Added optional chain
+      (filter.year ? exp.student?.year === filter.year : true) &&
       (filter.branch ? exp.branch === filter.branch : true) &&
       (filter.passoutYear ? exp.passoutYear === filter.passoutYear : true) &&
       (filter.placementType ? exp.placementType === filter.placementType : true) &&
@@ -91,7 +94,6 @@ const AdminDashboard = () => {
     );
   });
 
-  // --- Helper for Status Card Styles ---
   const getStatusStyles = (status) => {
     switch (status) {
       case "approved":
@@ -103,24 +105,26 @@ const AdminDashboard = () => {
     }
   };
   
-  // --- New attractive input field styles ---
-  const inputClass = `pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`;
-  const selectClass = `px-4 py-2 w-full border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`;
+  const inputClass = `pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-gray-400`;
+  const selectClass = `px-4 py-2 w-full border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-gray-400`;
 
   return (
-    // --- Full Dashboard Layout ---
-    <div className="flex h-screen bg-gray-50 text-gray-800">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <div className={`flex-1 flex flex-col transition-all duration-300 ${
           sidebarOpen ? 'md:pl-60' : 'md:pl-20'
       }`}>
         <Header toggleSidebar={toggleSidebar} />
 
-        {/* --- Main scrolling content --- */}
         <main className="flex-1 overflow-y-auto p-6">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Admin Dashboard</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6
+                        transform transition-all duration-300">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Admin Dashboard
+            </span>
+          </h2>
 
-          {/* --- Attractive Analytics Grid --- */}
+          {/* --- Analytics Grid --- */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-6">
             <StatCard title="Total Users" value={analytics.totalUsers} icon={<IconTotalUsers />} />
             <StatCard title="Total Posts" value={analytics.totalExperiences} icon={<IconTotalPosts />} />
@@ -129,8 +133,9 @@ const AdminDashboard = () => {
             <StatCard title="Rejected" value={analytics.totalRejected} icon={<IconRejected />} />
           </div>
 
-          {/* --- Attractive Filters Section --- */}
-          <div className="p-6 bg-white rounded-xl shadow-xl mb-6">
+          {/* --- Filters Section --- */}
+          <div className="p-6 bg-white rounded-xl shadow-lg mb-6
+                         transition-all duration-300 ease-out">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Student Name Search */}
               <div className="relative">
@@ -161,7 +166,8 @@ const AdminDashboard = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center justify-center gap-2 w-full px-4 py-2 
                            bg-gray-100 text-gray-700 font-medium rounded-lg shadow-sm
-                           hover:bg-gray-200 transition-all duration-300"
+                           transition-all duration-300
+                           hover:bg-gray-200 hover:shadow-md"
               >
                 <IconSliders />
                 {showFilters ? "Hide" : "Show"} All Filters
@@ -208,7 +214,7 @@ const AdminDashboard = () => {
                   name="date"
                   value={filter.date}
                   onChange={handleFilterChange}
-                  className={selectClass} // Use selectClass for consistent styling
+                  className={selectClass}
                 />
               </div>
             )}
@@ -220,7 +226,7 @@ const AdminDashboard = () => {
               <div className="text-center text-gray-600 font-medium text-xl">Loading posts...</div>
             ) : filteredExperiences.length === 0 ? (
               <div className="flex flex-col items-center justify-center 
-                            text-center bg-white shadow-2xl rounded-2xl p-10 
+                            text-center bg-white shadow-xl rounded-2xl p-10 
                             border border-gray-200">
                 <IconNotFound />
                 <h2 className="text-2xl font-semibold mt-4 mb-2 text-gray-800">No Posts Found</h2>
@@ -236,11 +242,13 @@ const AdminDashboard = () => {
                     <div
                       key={post._id}
                       onClick={() => navigate(`/admin/experience/${post._id}`)}
-                      className="bg-white rounded-2xl shadow-xl overflow-hidden 
-                                 transform transition-all duration-300 
-                                 hover:shadow-2xl hover:-translate-y-1 cursor-pointer"
+                      className="group bg-white rounded-2xl shadow-lg overflow-hidden 
+                                 transition-all duration-300 ease-out
+                                 hover:shadow-xl
+                                 cursor-pointer border border-gray-100 hover:border-gray-200"
                     >
-                      <div className="p-5 border-b border-gray-200">
+                      <div className="p-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white
+                                    transition-all duration-300 group-hover:from-blue-50 group-hover:to-blue-100">
                         <h3 className="text-xl font-bold text-gray-900 truncate">
                           {post.companyName || "N/A"}
                         </h3>
@@ -258,7 +266,7 @@ const AdminDashboard = () => {
                           </span>
                         </div>
                       </div>
-                      <div className={`p-5 ${styles.footer}`}>
+                      <div className={`p-5 ${styles.footer} transition-all duration-300 group-hover:bg-opacity-80`}>
                         <p className={`text-sm font-bold uppercase ${styles.text}`}>
                           Status: {post.status || "N/A"}
                         </p>
@@ -269,7 +277,6 @@ const AdminDashboard = () => {
               </div>
             )}
           </div>
-          {/* BUG FIX: Removed duplicate .map() block */}
         </main>
 
         <Footer />

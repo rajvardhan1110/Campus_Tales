@@ -5,11 +5,11 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-// --- Icon for "No Posts Found" ---
+// Subtle Icon for "No Posts Found"
 const IconNotFound = () => <svg className="w-16 h-16 text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m-1.125 0H6.625A2.25 2.25 0 004.5 4.875v11.25a2.25 2.25 0 002.25 2.25h10.5A2.25 2.25 0 0019.5 16.125v-1.5" /></svg>
 
-// --- Icon for Dashboard Button ---
-const IconDashboard = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+// Subtle Icon for Dashboard Button
+const IconDashboard = () => <svg className="w-5 h-5 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
 
 const MyPosts = () => {
   const navigate = useNavigate();
@@ -45,22 +45,23 @@ const MyPosts = () => {
   }, [fetchMyPosts]);
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-800">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <div className={`flex-1 flex flex-col transition-all duration-300 ${
           sidebarOpen ? 'md:pl-60' : 'md:pl-20'
       }`}>
         <Header toggleSidebar={toggleSidebar} />
         
-        {/* --- Main content area is now a flex-col and does NOT scroll --- */}
         <main className="flex-1 flex flex-col p-6 overflow-hidden">
           
-          {/* 1. Fixed Title */}
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 flex-shrink-0">
-            My Approved Posts
+          {/* Fixed Title */}
+          <h2 className="text-4xl font-bold text-gray-900 mb-8 flex-shrink-0">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              My Approved Posts
+            </span>
           </h2>
           
-          {/* 2. This new div is now the scrolling part */}
+          {/* Scrolling Content Area */}
           <div className="relative flex-1 overflow-y-auto">
             {loading ? (
               <div className="text-center text-gray-600 font-medium text-xl">
@@ -68,12 +69,14 @@ const MyPosts = () => {
               </div>
             ) : myPosts.length === 0 ? (
               <div className="flex flex-col items-center justify-center 
-                            text-center bg-white shadow-2xl rounded-2xl p-10 
+                            text-center bg-white shadow-xl rounded-2xl p-12 
                             border border-gray-200">
                 <IconNotFound />
-                <h2 className="text-2xl font-semibold mt-4 mb-2 text-gray-800">No Approved Posts</h2>
-                <p className="text-gray-500">
-                  Your approved posts will appear here once they are reviewed.
+                <h2 className="text-2xl font-semibold mt-6 mb-3 text-gray-800">
+                  No Approved Posts
+                </h2>
+                <p className="text-gray-500 max-w-md leading-relaxed">
+                  Your approved posts will appear here once they are reviewed and approved by our team.
                 </p>
               </div>
             ) : (
@@ -82,38 +85,45 @@ const MyPosts = () => {
                   <div
                     key={post._id}
                     onClick={() => navigate(`/experience/${post._id}`)}
-                    className="bg-white rounded-2xl shadow-xl overflow-hidden 
-                               transform transition-all duration-300 
-                               hover:shadow-2xl hover:-translate-y-1 cursor-pointer"
+                    className="group bg-white rounded-2xl shadow-lg overflow-hidden 
+                               transition-all duration-300 ease-out
+                               hover:shadow-xl
+                               cursor-pointer border border-gray-100 hover:border-gray-200"
                   >
-                    <div className="p-5 border-b border-gray-200">
+                    <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white
+                                  transition-all duration-300 group-hover:from-blue-50 group-hover:to-blue-100">
                       <h3 className="text-xl font-bold text-gray-900 truncate">
                         {post.companyName || "N/A"}
                       </h3>
                     </div>
-                    <div className="p-5 space-y-3">
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
+                    <div className="p-6 space-y-4">
+                      <div className="flex flex-wrap gap-2">
+                        <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full text-sm font-medium">
                           {post.branch || "N/A"}
                         </span>
-                        <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full font-medium">
+                        <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm font-medium">
                           Passout: <strong>{post.passoutYear || "N/A"}</strong>
                         </span>
                       </div>
-                      <div className="flex flex-wrap gap-2 text-sm">
-                         <span className="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-medium">
+                      <div className="flex flex-wrap gap-2">
+                         <span className="inline-block bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full text-sm font-medium">
                           {post.type || "N/A"}
                         </span>
-                        <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">
-                          Status: <strong>{post.status}</strong>
+                        <span className="inline-block bg-green-100 text-green-700 px-3 py-1.5 rounded-full text-sm font-medium">
+                          Status: <strong className="capitalize">{post.status}</strong>
                         </span>
                       </div>
                     </div>
-                    <div className="p-5 bg-gray-50 border-t border-gray-200">
+                    <div className="p-4 bg-gray-50 border-t border-gray-200
+                                  transition-all duration-300 group-hover:bg-gray-100">
                       <p className="text-xs text-gray-500">
                         Uploaded:{" "}
                         {post.createdAt
-                          ? new Date(post.createdAt).toLocaleDateString()
+                          ? new Date(post.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })
                           : "N/A"}
                       </p>
                     </div>
@@ -123,19 +133,23 @@ const MyPosts = () => {
             )}
           </div>
           
-          {/* 3. Fixed Button Area (with top padding and border) */}
+          {/* Fixed Button Area */}
           {!loading && (
-            <div className="flex justify-center pt-6 mt-4 border-t border-gray-200 flex-shrink-0">
+            <div className="flex justify-center pt-8 mt-6 border-t border-gray-200 flex-shrink-0">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="flex items-center justify-center gap-2
-                           px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-md
-                           transform transition-all duration-300 
-                           hover:bg-gray-200 hover:-translate-y-0.5 hover:shadow-lg
+                className="group flex items-center justify-center gap-3
+                           px-8 py-3 bg-white text-gray-700 font-semibold rounded-xl 
+                           border border-gray-300 shadow-lg
+                           transition-all duration-300 ease-out
+                           hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-xl
+                           hover:border-gray-400
                            active:scale-95"
               >
                 <IconDashboard />
-                Back to Dashboard
+                <span className="transition-transform duration-300 group-hover:scale-105">
+                  Back to Dashboard
+                </span>
               </button>
             </div>
           )}

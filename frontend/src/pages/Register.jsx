@@ -8,10 +8,9 @@ const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' })
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false) // Added loading state
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // Redirect logged-in users
     if (localStorage.getItem('token')) {
       navigate('/dashboard')
     }
@@ -19,12 +18,11 @@ const Register = () => {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.id]: e.target.value })
 
-  // --- REFACTORED WITH AXIOS & LOADING STATE ---
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setMessage('')
-    setLoading(true) // Set loading
+    setLoading(true)
 
     try {
       const response = await axios.post('http://localhost:3000/api/auth/register', formData)
@@ -40,63 +38,63 @@ const Register = () => {
         setError(err.message || 'Registration failed. Please try again.')
       }
     } finally {
-      setLoading(false) // Unset loading
+      setLoading(false)
     }
   }
 
-  // --- New attractive input field style ---
-  const inputContainerClass = "relative mb-5"
+  // Enhanced input field styles
+  const inputContainerClass = "relative mb-6"
   const inputClass = `
-    w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg 
-    text-gray-900 placeholder-gray-400 
-    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-    transition-all duration-300
+    w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl 
+    text-gray-900 placeholder-gray-500 bg-white
+    focus:outline-none focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500
+    transition-all duration-300 shadow-sm
+    hover:border-gray-400 hover:shadow-md
   `
-  const inputIconClass = "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+  const inputIconClass = "absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
 
-  // --- New attractive button style ---
+  // Enhanced button style
   const buttonClass = `
-    flex items-center justify-center w-full gap-2
-    px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg
-    transform transition-all duration-300 
-    hover:bg-blue-700 hover:-translate-y-1 hover:shadow-xl
-    active:scale-95
-    disabled:opacity-70 disabled:cursor-not-allowed
+    flex items-center justify-center w-full gap-3
+    px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white 
+    font-semibold rounded-xl shadow-lg
+    transform transition-all duration-300 ease-out
+    hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 
+    hover:shadow-xl hover:scale-[1.02]
+    active:scale-95 border border-blue-400/30
+    disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none
   `
 
   return (
-    // --- THEMED WRAPPER ---
-    // Added background blobs for consistency
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-50 p-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 overflow-hidden">
       
-      {/* --- Decorative Background Blobs --- */}
+      {/* Enhanced decorative background blobs */}
       <div 
         className="absolute top-1/4 -left-1/4 w-96 h-96 bg-blue-200 rounded-full 
-                   opacity-50 blur-3xl filter animate-pulse"
+                   opacity-40 blur-3xl filter animate-pulse"
       />
       <div 
         className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-purple-200 rounded-full 
-                   opacity-50 blur-3xl filter animate-pulse"
+                   opacity-40 blur-3xl filter animate-pulse"
         style={{ animationDelay: '2s' }}
       />
       
-      {/* AuthCard component now uses the new attractive style */}
-      <AuthCard title="Create Your Account">
+      <AuthCard title="Join CampusTales">
         
-        {/* --- Styled Messages --- */}
+        {/* Enhanced styled messages */}
         {error && (
-          <p className="border border-red-200 bg-red-50 text-red-700 p-3 rounded-lg mb-4 text-center text-sm">
+          <div className="border border-red-200 bg-red-50 text-red-700 p-4 rounded-xl mb-6 text-center text-sm">
             {error}
-          </p>
+          </div>
         )}
         {message && (
-          <p className="border border-green-200 bg-green-50 text-green-700 p-3 rounded-lg mb-4 text-center text-sm">
+          <div className="border border-green-200 bg-green-50 text-green-700 p-4 rounded-xl mb-6 text-center text-sm">
             {message}
-          </p>
+          </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          {/* --- Name Input Group --- */}
+        <form onSubmit={handleSubmit} className="space-y-2">
+          {/* Enhanced name input group */}
           <div className={inputContainerClass}>
             <label htmlFor="name" className="sr-only">Full Name</label>
             <svg className={inputIconClass} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -105,7 +103,7 @@ const Register = () => {
             <input
               type="text"
               id="name"
-              placeholder="Your Name"
+              placeholder="Your Full Name"
               value={formData.name}
               onChange={handleChange}
               className={inputClass}
@@ -113,7 +111,7 @@ const Register = () => {
             />
           </div>
 
-          {/* --- Email Input Group --- */}
+          {/* Enhanced email input group */}
           <div className={inputContainerClass}>
             <label htmlFor="email" className="sr-only">Email</label>
             <svg className={inputIconClass} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -130,7 +128,7 @@ const Register = () => {
             />
           </div>
 
-          {/* --- Password Input Group --- */}
+          {/* Enhanced password input group */}
           <div className={inputContainerClass}>
             <label htmlFor="password" className="sr-only">Password</label>
             <svg className={inputIconClass} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -147,26 +145,29 @@ const Register = () => {
             />
           </div>
 
+          {/* Enhanced register button */}
           <button
             type="submit"
             className={buttonClass}
-            disabled={loading} // Disable button when loading
+            disabled={loading}
           >
-            {/* --- Register Icon --- */}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                 className={`w-6 h-6 transform transition-transform duration-300 ${loading ? 'animate-spin' : 'group-hover:scale-105'}`}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.5 21c-2.305 0-4.47-.612-6.374-1.666z" />
             </svg>
-            {loading ? "Creating Account..." : "Create Account"}
+            <span className="transform transition-transform duration-300 group-hover:scale-105">
+              {loading ? "Creating Account..." : "Get Started"}
+            </span>
           </button>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Already have an account? 
-            <br />
-            {/* --- THEMED LINK --- */}
-            <a href="/login" className="text-blue-600 hover:text-blue-700 hover:underline font-medium">
-              Login here
+          {/* Enhanced footer text */}
+          <div className="text-center text-sm text-gray-600 mt-8 pt-6 border-t border-gray-200">
+            <p className="mb-2">Already have an account?</p>
+            <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold 
+                                      transition-all duration-300 hover:underline inline-block">
+              Sign in to your account
             </a>
-          </p>
+          </div>
         </form>
       </AuthCard>
     </div>
