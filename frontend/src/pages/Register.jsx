@@ -18,29 +18,40 @@ const Register = () => {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.id]: e.target.value })
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setMessage('')
-    setLoading(true)
+ const handleSubmit = async (e) => {
+  e.preventDefault()
+  setError('')
+  setMessage('')
+  setLoading(true)
 
-    try {
-      const response = await axios.post('http://localhost:3000/api/auth/register', formData)
-      
-      localStorage.setItem('token', response.data.token)
-      setMessage('Registration successful! Redirecting...')
-      setTimeout(() => navigate('/dashboard'), 1000)
-
-    } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message)
-      } else {
-        setError(err.message || 'Registration failed. Please try again.')
-      }
-    } finally {
-      setLoading(false)
-    }
+  // ✅ Basic frontend validation
+  if (!formData.email.endsWith("@walchandsangli.ac.in")) {
+    setError("Only @walchandsangli.ac.in emails are allowed")
+    setLoading(false)
+    return
   }
+
+  if (formData.password.length < 6) {
+    setError("Password must be at least 6 characters long")
+    setLoading(false)
+    return
+  }
+
+  try {
+    const response = await axios.post('http://localhost:3000/api/auth/register', formData)
+    localStorage.setItem('token', response.data.token)
+    setMessage('Registration successful! Redirecting...')
+    setTimeout(() => navigate('/dashboard'), 1000)
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      setError(err.response.data.message)
+    } else {
+      setError(err.message || 'Registration failed. Please try again.')
+    }
+  } finally {
+    setLoading(false)
+  }
+}
 
   // Enhanced input field styles
   const inputContainerClass = "relative mb-6"
