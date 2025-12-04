@@ -6,6 +6,7 @@ const getAllExperiences = async (req, res) => {
   try {
     const experiences = await Experience.find()
       .populate("student", "name email year") // populate student details
+      .lean() // Return plain JavaScript objects
       .sort({ createdAt: -1 });
 
     res.json(experiences);
@@ -17,10 +18,8 @@ const getAllExperiences = async (req, res) => {
 // ===== Get single experience by ID =====
 const getExperienceById = async (req, res) => {
   try {
-    const experience = await Experience.findById(req.params.id).populate(
-      "student",
-      "name email year"
-    );
+    const experience = await Experience.findById(req.params.id)
+      .populate("student", "name email year");
 
     if (!experience)
       return res.status(404).json({ message: "Experience not found" });

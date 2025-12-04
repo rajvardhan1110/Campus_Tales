@@ -1,11 +1,12 @@
 const Experience = require("../models/Experience");
+const QUESTIONS = require("../config/questions");
 
 // @desc Create new experience
 // @route POST /api/experience
 // @access Private (Student)
 exports.createExperience = async (req, res) => {
   try {
-    const { companyName, type, experienceText, year, branch, passoutYear, placementType } = req.body;
+    const { companyName, type, experienceText, year, branch, passoutYear, placementType, questions, additionalNotes } = req.body;
 
     if (!companyName || !type || !experienceText || !year || !branch || !passoutYear || !placementType) {
       return res.status(400).json({ message: "All fields are required" });
@@ -20,6 +21,8 @@ exports.createExperience = async (req, res) => {
       branch,
       passoutYear,
       placementType,
+      questions: questions || [],
+      additionalNotes: additionalNotes || "",
       status: "pending",
     });
 

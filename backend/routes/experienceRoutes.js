@@ -12,9 +12,14 @@ const {
   getMyPosts
   
 } = require("../controllers/experienceController");
+const QUESTIONS = require("../config/questions");
 
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
+// Get predefined questions (public)
+router.get("/questions/list", (req, res) => {
+  res.json(QUESTIONS);
+});
 
 //experience routes 
 router.get("/me", protect, getMyPosts);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -16,11 +16,48 @@ const CreateExperience = () => {
     passoutYear: "",
     placementType: "",
   });
-  
+
+  const [predefinedQuestions, setPredefinedQuestions] = useState([]);
+  const [selectedQuestions, setSelectedQuestions] = useState({});
   const [loading, setLoading] = useState(false);
+  const [questionLoading, setQuestionLoading] = useState(true);
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  const fetchQuestions = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/experience/questions/list");
+      setPredefinedQuestions(res.data);
+    } catch (err) {
+      console.error("Error fetching questions:", err);
+    } finally {
+      setQuestionLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleQuestionToggle = (questionId) => {
+    setSelectedQuestions(prev => {
+      const updated = { ...prev };
+      if (updated.hasOwnProperty(questionId)) {
+        delete updated[questionId];
+      } else {
+        updated[questionId] = "";
+      }
+      return updated;
+    });
+  };
+
+  const handleQuestionAnswerChange = (questionId, answer) => {
+    setSelectedQuestions(prev => ({
+      ...prev,
+      [questionId]: answer
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -35,10 +72,36 @@ const CreateExperience = () => {
       return alert(`Passout year cannot be more than ${currentYear + 4}`);
     }
 
+    // Validate that all selected questions have answers
+    const unansweredQuestions = Object.entries(selectedQuestions).filter(
+      ([qId, answer]) => !answer || answer.trim() === ""
+    );
+
+    if (unansweredQuestions.length > 0) {
+      setLoading(false);
+      const questionNumbers = unansweredQuestions
+        .map(([qId]) => {
+          const qIndex = predefinedQuestions.findIndex(q => q.id === qId);
+          return `Q${qIndex + 1}`;
+        })
+        .join(", ");
+      return alert(`Please provide answers for: ${questionNumbers}`);
+    }
+
+    // Format questions array
+    const questions = Object.entries(selectedQuestions).map(([qId, answer]) => {
+      const question = predefinedQuestions.find(q => q.id === qId);
+      return {
+        questionId: qId,
+        question: question?.text,
+        answer: answer.trim()
+      };
+    });
+
     try {
       await axios.post(
         "http://localhost:3000/api/experience",
-        formData,
+        { ...formData, questions, additionalNotes: "" },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -196,20 +259,79 @@ const CreateExperience = () => {
               </select>
             </div>
           </div>
-          
-          {/* Textarea (Full Width) */}
-          <div>
-            <label htmlFor="experienceText" className={labelClass}>Your Experience</label>
+
+          {/* Questions Section - RIGHT AFTER BASIC FIELDS */}
+          <div className="mt-8 pt-8 border-t-2 border-gray-200">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Answer Interview & Aptitude Questions
+              </span>
+            </h3>
+            <p className="text-gray-600 mb-6">Help future candidates prepare by answering these interview-focused questions</p>
+            
+            {questionLoading ? (
+              <div className="text-center py-4 text-gray-500">Loading questions...</div>
+            ) : (
+              <div className="space-y-4">
+                {predefinedQuestions.map((question) => (
+                  <div key={question.id} className={`border rounded-lg p-4 transition-all ${
+                    selectedQuestions.hasOwnProperty(question.id)
+                      ? 'border-blue-400 bg-blue-50'
+                      : 'border-gray-200 hover:border-blue-300'
+                  }`}>
+                    <div className="flex items-start gap-3 mb-3">
+                      <input
+                        type="checkbox"
+                        id={question.id}
+                        checked={selectedQuestions.hasOwnProperty(question.id)}
+                        onChange={() => handleQuestionToggle(question.id)}
+                        className="mt-1 w-5 h-5 text-blue-600 rounded cursor-pointer"
+                      />
+                      <label htmlFor={question.id} className={`cursor-pointer flex-grow ${
+                        selectedQuestions.hasOwnProperty(question.id)
+                          ? 'text-blue-900 font-semibold'
+                          : 'text-gray-900 font-medium'
+                      }`}>
+                        {question.text}
+                        {selectedQuestions.hasOwnProperty(question.id) && (
+                          <span className="ml-2 text-red-500 font-bold" title="Answer required">*</span>
+                        )}
+                      </label>
+                    </div>
+                    
+                    <div className={`overflow-hidden transition-all duration-300 ${selectedQuestions.hasOwnProperty(question.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                      <div className="ml-8 mt-3">
+                        <textarea
+                          placeholder="Your answer here..."
+                          value={selectedQuestions[question.id] || ""}
+                          onChange={(e) => handleQuestionAnswerChange(question.id, e.target.value)}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white
+                                   transition-all duration-300 resize-none"
+                          rows="3"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Main Experience & Notes Textarea */}
+          <div className="mt-8 pt-8 border-t-2 border-gray-200">
+            <label htmlFor="experienceText" className={labelClass}>Your Experience & Insights</label>
             <textarea
               id="experienceText"
               name="experienceText"
-              placeholder="Describe your experience in detail... (e.g., rounds, questions asked, difficulty)"
+              placeholder="Describe your experience in detail... (e.g., interview rounds, questions asked, difficulty level, tips for candidates, company insights, preparation resources)"
               value={formData.experienceText}
               onChange={handleChange}
-              className={`${inputClass} h-40 resize-none`}
-              rows="8"
+              className={`${inputClass} h-48 resize-none`}
+              rows="10"
               required
             />
+            <p className="text-sm text-gray-500 mt-2">Please include details on the interview rounds, technical questions, difficulty level, preparation tips, and any other insights that may benefit future candidates. If available, kindly add contact information as well eg.email,mobile no. </p>
           </div>
 
           {/* Submit Button */}

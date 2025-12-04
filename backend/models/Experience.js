@@ -49,6 +49,18 @@ const experienceSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    questions: [
+      {
+        _id: false,
+        questionId: String,
+        question: String,
+        answer: String,
+      },
+    ],
+    additionalNotes: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

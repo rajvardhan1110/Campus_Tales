@@ -20,12 +20,20 @@ const Dashboard = () => {
     studentName: "", companyName: "", type: "", year: "",
     branch: "", passoutYear: "", placementType: "",
   });
+  const [loading, setLoading] = useState(true);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const token = localStorage.getItem("token");
 
   const fetchExperiences = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     try {
+      setLoading(true);
       const response = await axios.get("http://localhost:3000/api/experience", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -42,8 +50,14 @@ const Dashboard = () => {
       setExperiences(filtered);
     } catch (err) {
       console.error("Failed to fetch experiences:", err);
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+    } finally {
+      setLoading(false);
     }
-  }, [token, filters]);
+  }, [filters, navigate]);
 
   const handleFilterChange = (e) =>
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -177,7 +191,16 @@ const Dashboard = () => {
 
           {/* --- Experiences Grid --- */}
           <div className="relative">
-            {experiences.length === 0 ? (
+            {loading ? (
+              <div className="flex flex-col items-center justify-center 
+                            text-center bg-white shadow-xl rounded-2xl p-10 
+                            border border-gray-200"
+              >
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+                <h2 className="text-2xl font-semibold mt-4 mb-2 text-gray-800">Loading Experiences...</h2>
+                <p className="text-gray-500">Please wait while we fetch the data</p>
+              </div>
+            ) : experiences.length === 0 ? (
               <div className="flex flex-col items-center justify-center 
                             text-center bg-white shadow-xl rounded-2xl p-10 
                             border border-gray-200"
@@ -199,12 +222,31 @@ const Dashboard = () => {
                                hover:shadow-xl
                                cursor-pointer border border-gray-100 hover:border-gray-200"
                   >
-                    {/* Card Header - Company Name */}
-                    <div className="p-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white
-                                  transition-all duration-300 group-hover:from-blue-50 group-hover:to-blue-100">
-                      <h3 className="text-xl font-bold text-gray-900 truncate">
-                        {exp.companyName || "N/A"}
-                      </h3>
+                    {/* Card Header - ATTRACTIVE Company Name Section */}
+                    <div className="p-6 bg-gradient-to-r from-blue-100 to-blue-50 
+                                  border-b-2 border-blue-200">
+                      <div className="relative">
+                        {/* Decorative corner accents */}
+                        <div className="absolute -top-2 -left-2 w-4 h-4 bg-blue-300 rounded-full opacity-20"></div>
+                        <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-blue-300 rounded-full opacity-20"></div>
+                        
+                        {/* Company Name with solid background */}
+                        <div className="relative">
+                          <h3 className="text-2xl font-bold text-gray-900 truncate mb-1 
+                                       bg-gradient-to-r from-blue-800 to-blue-900 bg-clip-text text-transparent">
+                            {exp.companyName || "N/A"}
+                          </h3>
+                          
+                          {/* Company Type Badge */}
+                          {/* <div className="inline-flex items-center gap-1.5 px-3 py-1 
+                                        bg-blue-600/10 border border-blue-200 rounded-full">
+                            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                            <span className="text-sm font-medium text-blue-700">
+                              {exp.type || "Experience"}
+                            </span>
+                          </div> */}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Card Body - Details */}

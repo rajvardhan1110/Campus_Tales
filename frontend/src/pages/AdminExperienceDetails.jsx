@@ -147,6 +147,45 @@ const AdminExperienceDetails = () => {
                 {experience.experienceText || "No description provided"}
               </div>
             </div>
+
+            {/* --- Interview Questions & Answers --- */}
+            {experience.questions && experience.questions.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4
+                              transform transition-all duration-300">
+                  Interview Questions & Answers
+                </h2>
+                <div className="space-y-4">
+                  {experience.questions.map((q, index) => (
+                    <div key={index} className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6
+                                              transition-all duration-300 hover:shadow-lg">
+                      <h3 className="text-lg font-semibold text-blue-900 mb-3">
+                        Q{index + 1}: {q.question}
+                      </h3>
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 text-gray-800
+                                    whitespace-pre-line leading-relaxed break-words">
+                        {q.answer || "No answer provided"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* --- Additional Notes --- */}
+            {experience.additionalNotes && experience.additionalNotes.trim() !== "" && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4
+                              transform transition-all duration-300">
+                  Additional Notes & Insights
+                </h2>
+                <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-gray-800 
+                              whitespace-pre-line leading-relaxed break-words overflow-hidden
+                              transition-all duration-300 hover:bg-green-100">
+                  {experience.additionalNotes}
+                </div>
+              </div>
+            )}
             
             {/* Skills / Tools (if they exist) */}
             {experience.skills && (

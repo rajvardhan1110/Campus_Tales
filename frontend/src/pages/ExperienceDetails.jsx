@@ -110,6 +110,50 @@ const ExperienceDetails = () => {
               </div>
             </div>
 
+            {/* --- Questions & Answers Section --- */}
+            {experience.questions && experience.questions.length > 0 && (
+              <div className="mt-12 pt-8 border-t-2 border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6
+                              transform transition-all duration-300">
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    Interview & Aptitude Q&A
+                  </span>
+                </h2>
+                
+                <div className="space-y-6">
+                  {experience.questions.map((qa, index) => (
+                    <div key={index} className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-xl p-6
+                                             transition-all duration-300 hover:shadow-lg hover:border-blue-200">
+                      <h3 className="text-lg font-semibold text-blue-900 mb-3">
+                        <span className="text-purple-600">Q{index + 1}:</span> {qa.question}
+                      </h3>
+                      <div className="bg-white border border-blue-100 rounded-lg p-5 text-gray-800 
+                                    whitespace-pre-line leading-relaxed break-words">
+                        <p className="text-gray-700">{qa.answer}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* --- Additional Notes Section --- */}
+            {experience.additionalNotes && (
+              <div className="mt-12 pt-8 border-t-2 border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4
+                              transform transition-all duration-300">
+                  <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                    Additional Notes & Insights
+                  </span>
+                </h2>
+                <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-gray-800 
+                            whitespace-pre-line leading-relaxed break-words
+                            transition-all duration-300 hover:bg-green-100">
+                  {experience.additionalNotes}
+                </div>
+              </div>
+            )}
+
             {/* --- Back Button --- */}
             <div className="flex justify-center mt-10">
               <button

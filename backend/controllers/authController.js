@@ -16,11 +16,10 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // ✅ Email restriction
-    if (!email.endsWith("@walchandsangli.ac.in")) {
-      return res
-        .status(400)
-        .json({ message: "Only @walchandsangli.ac.in emails are allowed" });
+    // ✅ Email validation (basic format check)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Please enter a valid email address" });
     }
 
     // ✅ Password constraint
@@ -67,11 +66,8 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // ✅ Email restriction
-    if (!email.endsWith("@walchandsangli.ac.in")) {
-      return res
-        .status(400)
-        .json({ message: "Only @walchandsangli.ac.in emails are allowed" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
     const user = await User.findOne({ email });
