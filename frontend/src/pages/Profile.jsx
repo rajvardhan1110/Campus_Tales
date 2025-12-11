@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 // Icons for Stat Cards
@@ -215,24 +213,6 @@ const Profile = () => {
           {/* **BUTTON AREA (FIXED)** */}
           {!loading && (
             <div className="flex flex-col items-center gap-4 pt-8 mt-6 border-t border-gray-200 flex-shrink-0">
-
-              {/* MY POSTS BUTTON (ADDED)
-              <button
-                onClick={() => navigate('/dashboard/myposts')}
-                className="group flex items-center justify-center gap-3
-                           px-8 py-3 bg-white text-gray-700 font-semibold rounded-xl 
-                           border border-gray-300 shadow-lg
-                           transition-all duration-300 ease-out
-                           hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-xl
-                           hover:border-gray-400 active:scale-95"
-              >
-                <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25H5.625a2.25 2.25 0 01-2.25-2.25V7.5A2.25 2.25 0 015.625 5.25h3.375c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H5.625v-1.5z" />
-                </svg>
-                <span className="transition-transform duration-300 group-hover:scale-105">
-                  My Posts
-                </span>
-              </button> */}
 
               {/* DASHBOARD BUTTON */}
               <button

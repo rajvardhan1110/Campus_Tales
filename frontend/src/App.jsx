@@ -5,7 +5,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import MyPosts from "./pages/MyPosts";
-import MyPostStatus from "./pages/MyPostStatus";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import CreateExperience from "./pages/CreateExperience";
@@ -46,7 +45,6 @@ function App() {
         <Route path="/create" element={<RequireAuth><CreateExperience /></RequireAuth>} />
         <Route path="/experience/:id" element={<RequireAuth><ExperienceDetails /></RequireAuth>} />
         <Route path="/dashboard/myposts" element={<RequireAuth><MyPosts /></RequireAuth>} />
-        <Route path="/dashboard/mypoststatus" element={<RequireAuth><MyPostStatus /></RequireAuth>} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
 
         {/* Admin Routes */}

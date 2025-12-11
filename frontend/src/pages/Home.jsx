@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 const Home = () => {
   const navigate = useNavigate()
 
-  // More subtle primary button style
   const primaryButtonClasses = `
     flex items-center justify-center gap-3
     px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white 

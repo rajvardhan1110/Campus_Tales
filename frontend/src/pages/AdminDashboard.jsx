@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+// Sidebar/Header not used in this view (sidebar removed from UI)
 import Footer from "../components/Footer";
 
 // --- Icons for Stat Cards ---
@@ -33,7 +32,7 @@ const StatCard = ({ title, value, icon }) => (
 );
 
 const AdminDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // sidebar removed: no local sidebar state needed
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState({});
@@ -44,7 +43,7 @@ const AdminDashboard = () => {
   });
 
   const token = localStorage.getItem("token");
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  // toggleSidebar removed
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -114,12 +113,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-      {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
       <div className="flex-1 flex flex-col transition-all duration-300">
-         {/* ${
-          sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-      }`}> */}
-        {/* <Header toggleSidebar={toggleSidebar} /> */}
 
         <main className="flex-1 flex flex-col p-6 overflow-hidden">
           <div className="flex-shrink-0">

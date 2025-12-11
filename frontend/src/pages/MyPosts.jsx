@@ -1,23 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-// Subtle Icon for "No Posts Found"
 const IconNotFound = () => <svg className="w-16 h-16 text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m-1.125 0H6.625A2.25 2.25 0 004.5 4.875v11.25a2.25 2.25 0 002.25 2.25h10.5A2.25 2.25 0 0019.5 16.125v-1.5" /></svg>
-
-// Subtle Icon for Dashboard Button
 const IconDashboard = () => <svg className="w-5 h-5 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
 
 const MyPosts = () => {
   const navigate = useNavigate();
   const [myPosts, setMyPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const fetchMyPosts = useCallback(async () => {
     try {
@@ -46,12 +38,8 @@ const MyPosts = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-      {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
       <div className="flex-1 flex flex-col transition-all duration-300">
-         {/* ${
-          sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-      }`}> */}
-        {/* <Header toggleSidebar={toggleSidebar} /> */}
+      
         
         <main className="flex-1 flex flex-col p-6 overflow-hidden">
           
@@ -106,14 +94,7 @@ const MyPosts = () => {
                             {post.companyName || "N/A"}
                           </h3>
                           
-                          {/* Company Type Badge */}
-                          {/* <div className="inline-flex items-center gap-1.5 px-3 py-1 
-                                        bg-blue-600/10 border border-blue-200 rounded-full">
-                            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                            <span className="text-sm font-medium text-blue-700">
-                              {post.type || "Experience"}
-                            </span>
-                          </div> */}
+
                         </div>
                       </div>
                     </div>

@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+// Sidebar and Header removed from this view (not rendered)
 import Footer from "../components/Footer";
 
 // --- Icons ---
@@ -34,13 +33,13 @@ const StatusBadge = ({ status }) => {
 const AdminExperienceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // sidebar removed: no local sidebar state needed
   const [experience, setExperience] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const token = localStorage.getItem("token");
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  // toggleSidebar removed
 
   const fetchExperience = useCallback(async () => {
     try {
@@ -84,12 +83,8 @@ const AdminExperienceDetails = () => {
   if (loading || !experience) {
     return (
       <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-        {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
         <div className="flex-1 flex flex-col transition-all duration-300">
-           {/* ${
-            sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-        }`}> */}
-          {/* <Header toggleSidebar={toggleSidebar} /> */}
+
           <main className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
             <div className="text-gray-600 text-xl font-medium">
               Loading...
@@ -103,13 +98,9 @@ const AdminExperienceDetails = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-      {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
       
       <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
-         {/* ${
-          sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-      }`}> */}
-        {/* <Header toggleSidebar={toggleSidebar} /> */}
+
 
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 sm:p-12
