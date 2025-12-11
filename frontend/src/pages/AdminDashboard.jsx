@@ -46,6 +46,10 @@ const AdminDashboard = () => {
   const token = localStorage.getItem("token");
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
   const branches = [
     "Civil Engineering", "Mechanical Engineering", "Electrical", "Electronics",
@@ -85,7 +89,7 @@ const AdminDashboard = () => {
       (filter.studentName ? exp.student?.name.toLowerCase().includes(filter.studentName.toLowerCase()) : true) &&
       (filter.companyName ? exp.companyName.toLowerCase().includes(filter.companyName.toLowerCase()) : true) &&
       (filter.type ? exp.type === filter.type : true) &&
-      (filter.year ? exp.student?.year === filter.year : true) &&
+      (filter.year ? ((exp.year && exp.year === filter.year) || (exp.student?.year && exp.student.year === filter.year)) : true) &&
       (filter.branch ? exp.branch === filter.branch : true) &&
       (filter.passoutYear ? exp.passoutYear === filter.passoutYear : true) &&
       (filter.placementType ? exp.placementType === filter.placementType : true) &&
@@ -110,19 +114,41 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
+      {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
+      <div className="flex-1 flex flex-col transition-all duration-300">
+         {/* ${
           sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-      }`}>
-        <Header toggleSidebar={toggleSidebar} />
+      }`}> */}
+        {/* <Header toggleSidebar={toggleSidebar} /> */}
 
-        <main className="flex-1 overflow-y-auto p-6">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6
-                        transform transition-all duration-300">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Admin Dashboard
-            </span>
-          </h2>
+        <main className="flex-1 flex flex-col p-6 overflow-hidden">
+          <div className="flex-shrink-0">
+            <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-gray-900
+                          transform transition-all duration-300">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Admin Dashboard
+              </span>
+            </h2>
+
+            <div className="flex items-center">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-red-700 
+                           bg-red-50 border border-red-300 rounded-xl shadow-sm
+                           transition-all duration-300 ease-out
+                           hover:bg-red-100 hover:-translate-y-0.5 hover:shadow-md
+                           hover:border-red-400
+                           active:scale-95 group"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                     className="w-5 h-5 transition-transform duration-300 group-hover:scale-105">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                </svg>
+                <span className="transition-transform duration-300 group-hover:scale-105">Logout</span>
+              </button>
+            </div>
+          </div>
 
           {/* --- Analytics Grid --- */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-6">
@@ -219,9 +245,10 @@ const AdminDashboard = () => {
               </div>
             )}
           </div>
+          </div>
 
-          {/* --- Experiences List --- */}
-          <div className="relative">
+          {/* --- Experiences List (scrollable) --- */}
+          <div className="relative flex-1 overflow-y-auto">
             {loading ? (
               <div className="text-center text-gray-600 font-medium text-xl">Loading posts...</div>
             ) : filteredExperiences.length === 0 ? (

@@ -84,11 +84,12 @@ const AdminExperienceDetails = () => {
   if (loading || !experience) {
     return (
       <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-        <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className={`flex-1 flex flex-col transition-all duration-300 ${
+        {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
+        <div className="flex-1 flex flex-col transition-all duration-300">
+           {/* ${
             sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-        }`}>
-          <Header toggleSidebar={toggleSidebar} />
+        }`}> */}
+          {/* <Header toggleSidebar={toggleSidebar} /> */}
           <main className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
             <div className="text-gray-600 text-xl font-medium">
               Loading...
@@ -102,12 +103,13 @@ const AdminExperienceDetails = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
       
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+      <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
+         {/* ${
           sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-      }`}>
-        <Header toggleSidebar={toggleSidebar} />
+      }`}> */}
+        {/* <Header toggleSidebar={toggleSidebar} /> */}
 
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 sm:p-12
@@ -203,42 +205,47 @@ const AdminExperienceDetails = () => {
             )}
 
             {/* --- Approve / Reject Buttons --- */}
-            {experience.status === "pending" && (
+            {(experience.status !== 'approved' || experience.status !== 'rejected') && (
               <div className="flex justify-center gap-4 mt-10 border-t border-gray-200 pt-8">
-                <button
-                  onClick={() => handleUpdate("approve")}
-                  disabled={isUpdating}
-                  className="group flex items-center justify-center gap-2 w-full sm:w-auto
-                             px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white 
-                             font-semibold rounded-lg shadow-lg
-                             transition-all duration-300 ease-out
-                             hover:from-green-600 hover:to-green-700 hover:-translate-y-0.5 
-                             hover:shadow-xl
-                             active:scale-95
-                             disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                  <IconApprove />
-                  <span className="transition-transform duration-300 group-hover:scale-105">
-                    {isUpdating ? "Approving..." : "Approve"}
-                  </span>
-                </button>
-                <button
-                  onClick={() => handleUpdate("reject")}
-                  disabled={isUpdating}
-                  className="group flex items-center justify-center gap-2 w-full sm:w-auto
-                             px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white 
-                             font-semibold rounded-lg shadow-lg
-                             transition-all duration-300 ease-out
-                             hover:from-red-600 hover:to-red-700 hover:-translate-y-0.5 
-                             hover:shadow-xl
-                             active:scale-95
-                             disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                  <IconReject />
-                  <span className="transition-transform duration-300 group-hover:scale-105">
-                    {isUpdating ? "Rejecting..." : "Reject"}
-                  </span>
-                </button>
+                {experience.status !== 'approved' && (
+                  <button
+                    onClick={() => handleUpdate("approve")}
+                    disabled={isUpdating}
+                    className="group flex items-center justify-center gap-2 w-full sm:w-auto
+                               px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white 
+                               font-semibold rounded-lg shadow-lg
+                               transition-all duration-300 ease-out
+                               hover:from-green-600 hover:to-green-700 hover:-translate-y-0.5 
+                               hover:shadow-xl
+                               active:scale-95
+                               disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                  >
+                    <IconApprove />
+                    <span className="transition-transform duration-300 group-hover:scale-105">
+                      {isUpdating ? "Approving..." : "Approve"}
+                    </span>
+                  </button>
+                )}
+
+                {experience.status !== 'rejected' && (
+                  <button
+                    onClick={() => handleUpdate("reject")}
+                    disabled={isUpdating}
+                    className="group flex items-center justify-center gap-2 w-full sm:w-auto
+                               px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white 
+                               font-semibold rounded-lg shadow-lg
+                               transition-all duration-300 ease-out
+                               hover:from-red-600 hover:to-red-700 hover:-translate-y-0.5 
+                               hover:shadow-xl
+                               active:scale-95
+                               disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                  >
+                    <IconReject />
+                    <span className="transition-transform duration-300 group-hover:scale-105">
+                      {isUpdating ? "Rejecting..." : "Reject"}
+                    </span>
+                  </button>
+                )}
               </div>
             )}
 

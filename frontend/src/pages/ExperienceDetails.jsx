@@ -43,11 +43,12 @@ const ExperienceDetails = () => {
   if (!experience) {
     return (
       <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-        <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        <div className={`flex-1 flex flex-col transition-all duration-300 ${
-            sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-        }`}>
-          <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} /> */}
+        <div className="flex-1 flex flex-col transition-all duration-300 ">
+        {/* // ${
+        //     sidebarOpen ? 'md:pl-60' : 'md:pl-20'
+        // }`}> */}
+          {/* <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} /> */}
           <main className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
             <div className="text-gray-600 text-xl font-medium">
               Loading experience details...
@@ -61,12 +62,13 @@ const ExperienceDetails = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} /> */}
 
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+      <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300 ">
+        {/* ${
           sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-      }`}>
-        <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      }`}> */}
+        {/* <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} /> */}
 
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 sm:p-12

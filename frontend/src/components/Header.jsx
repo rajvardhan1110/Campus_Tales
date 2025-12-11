@@ -17,7 +17,7 @@ const Header = ({ toggleSidebar }) => {
       {/* Left Section: Hamburger Menu + Title */}
       <div className="flex items-center gap-5">
         {/* Subtle Hamburger Icon */}
-        <button
+        {/* <button
           className="text-gray-500 hover:text-blue-600 focus:outline-none
                     transition-all duration-300 
                     hover:bg-blue-50 
@@ -28,7 +28,7 @@ const Header = ({ toggleSidebar }) => {
                className="w-6 h-6 transition-transform duration-300">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
-        </button>
+        </button> */}
 
         {/* Subtle Themed Title */}
         <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent
@@ -41,11 +41,11 @@ const Header = ({ toggleSidebar }) => {
       <div className="flex items-center">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-700 
-                     bg-white border border-gray-300 rounded-xl shadow-sm
+          className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-red-700 
+                     bg-red-50 border border-red-300 rounded-xl shadow-sm
                      transition-all duration-300 ease-out
-                     hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-md
-                     hover:border-gray-400
+                     hover:bg-red-100 hover:-translate-y-0.5 hover:shadow-md
+                     hover:border-red-400
                      active:scale-95 group"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 

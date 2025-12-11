@@ -46,18 +46,19 @@ const MyPosts = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800">
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
+      {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
+      <div className="flex-1 flex flex-col transition-all duration-300">
+         {/* ${
           sidebarOpen ? 'md:pl-60' : 'md:pl-20'
-      }`}>
-        <Header toggleSidebar={toggleSidebar} />
+      }`}> */}
+        {/* <Header toggleSidebar={toggleSidebar} /> */}
         
         <main className="flex-1 flex flex-col p-6 overflow-hidden">
           
           {/* Fixed Title */}
           <h2 className="text-4xl font-bold text-gray-900 mb-8 flex-shrink-0">
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              My Approved Posts
+              My Posts
             </span>
           </h2>
           
