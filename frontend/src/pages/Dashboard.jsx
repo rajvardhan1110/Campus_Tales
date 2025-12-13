@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Footer from "../components/Footer";
+import config from "../../config";
+const API = config.BASE_URL;
 
 // --- Icon Components for Inputs ---
 const IconSearch = () => (
@@ -105,7 +107,7 @@ const Dashboard = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:3000/api/experience", {
+      const response = await axios.get(`${API}/api/experience`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = response.data;

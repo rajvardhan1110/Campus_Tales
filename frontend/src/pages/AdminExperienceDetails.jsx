@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-// Sidebar and Header removed from this view (not rendered)
 import Footer from "../components/Footer";
+import config from "../../config";
+const API = config.BASE_URL;
 
 // --- Icons ---
 const IconApprove = () => <svg className="w-5 h-5 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -44,7 +45,7 @@ const AdminExperienceDetails = () => {
   const fetchExperience = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:3000/api/admin/experience/${id}`, {
+      const res = await axios.get(`${API}/api/admin/experience/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setExperience(res.data);
@@ -60,8 +61,8 @@ const AdminExperienceDetails = () => {
   const handleUpdate = async (action) => {
     const url =
       action === "approve"
-        ? `http://localhost:3000/api/admin/experience/approve/${id}`
-        : `http://localhost:3000/api/admin/experience/reject/${id}`;
+        ? `${API}/api/admin/experience/approve/${id}`
+        : `${API}/api/admin/experience/reject/${id}`;
     
     setIsUpdating(true);
     try {

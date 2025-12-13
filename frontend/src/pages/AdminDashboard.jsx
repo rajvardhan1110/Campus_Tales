@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 // Sidebar/Header not used in this view (sidebar removed from UI)
 import Footer from "../components/Footer";
+import config from "../../config";
+const API = config.BASE_URL;
 
 // --- Icons for Stat Cards ---
 const IconTotalUsers = () => <svg className="w-8 h-8 text-purple-500 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 00-12.728 0m12.728 0A9.094 9.094 0 015.636 18.72m12.728 0A9.094 9.094 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632zM15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -61,8 +63,8 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const expPromise = axios.get("http://localhost:3000/api/admin/experience/all", { headers });
-      const analyticsPromise = axios.get("http://localhost:3000/api/admin/analytics", { headers });
+      const expPromise = axios.get(`${API}/api/admin/experience/all`, { headers });
+      const analyticsPromise = axios.get(`${API}/api/admin/analytics`, { headers });
 
       const [expResponse, analyticsResponse] = await Promise.all([expPromise, analyticsPromise]);
 

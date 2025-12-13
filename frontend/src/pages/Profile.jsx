@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Footer from "../components/Footer";
+import config from "../../config";
+const API = config.BASE_URL;
 
 // Icons for Stat Cards
 const IconTotal = () => <svg className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.75V16.5m-4.5-12.75V16.5m-4.5-12.75V16.5m0 4.5h13.5M3.75 7.5h13.5m-13.5 4.5h13.5m0 4.5h-13.5" /></svg>
@@ -56,8 +58,8 @@ const Profile = () => {
 
       const headers = { Authorization: `Bearer ${token}` };
 
-      const profilePromise = axios.get("http://localhost:3000/api/auth/me", { headers });
-      const postsPromise = axios.get("http://localhost:3000/api/experience/me", { headers });
+      const profilePromise = axios.get(`${API}/api/auth/me`, { headers });
+      const postsPromise = axios.get(`${API}/api/experience/me`, { headers });
 
       const [profileResponse, postsResponse] = await Promise.all([profilePromise, postsPromise]);
 

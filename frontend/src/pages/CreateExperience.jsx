@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import config from "../../config";
+const API = config.BASE_URL;
 
 const CreateExperience = () => {
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ const CreateExperience = () => {
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/experience/questions/list");
+      const res = await axios.get(`${API}/api/experience/questions/list`);
       setPredefinedQuestions(res.data);
     } catch (err) {
       console.error("Error fetching questions:", err);
@@ -100,7 +102,7 @@ const CreateExperience = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/experience",
+        `${API}/api/experience`,
         { ...formData, questions, additionalNotes: "" },
         {
           headers: {

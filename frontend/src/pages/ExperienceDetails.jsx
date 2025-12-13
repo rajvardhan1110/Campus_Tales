@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Footer from "../components/Footer";
+import config from "../../config";
+const API = config.BASE_URL;
 
 // --- InfoTag Component ---
 const InfoTag = ({ label, value }) => (
@@ -19,7 +21,7 @@ const ExperienceDetails = () => {
 
   const fetchExperience = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/experience/${id}`, {
+      const response = await axios.get(`${API}/api/experience/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setExperience(response.data);

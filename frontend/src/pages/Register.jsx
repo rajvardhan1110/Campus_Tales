@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import AuthCard from '../components/AuthCard'
+import config from "../../config";
+const API = config.BASE_URL;
 
 const Register = () => {
   const navigate = useNavigate()
@@ -38,7 +40,7 @@ const Register = () => {
   }
 
   try {
-    const response = await axios.post('http://localhost:3000/api/auth/register', formData)
+    const response = await axios.post(`${API}/api/auth/register`, formData)
     localStorage.setItem('token', response.data.token)
     setMessage('Registration successful! Redirecting...')
     setTimeout(() => navigate('/dashboard'), 1000)

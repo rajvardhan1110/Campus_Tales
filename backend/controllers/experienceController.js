@@ -54,8 +54,18 @@ exports.getExperienceById = async (req, res) => {
   try {
     const exp = await Experience.findById(req.params.id).populate("student", "name email");
     if (!exp) return res.status(404).json({ message: "Experience not found" });
-    res.json(exp);
+    if(exp.status !== "approved") {
+      res.status(400).json({
+        status: "pending",
+        message: "experiences is not approved"
+      })  
+      console.log("Experince is not approved",exp.id)
+      return;      
+    }
+    console.log(exp);
+    res.status(200).json(exp);
   } catch (error) {
+    console.log("This is the error: ",error)
     res.status(500).json({ message: "Server error" });
   }
 };
