@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -11,46 +11,63 @@ import CreateExperience from "./pages/CreateExperience";
 import ExperienceDetails from "./pages/ExperienceDetails";
 import AdminExperienceDetails from "./pages/AdminExperienceDetails";
 
-function App() {
+// RequireAuth component for student routes
+const RequireAuth = () => {
   const token = localStorage.getItem("token");
   let user = null;
 
   if (token) {
     try {
-      user = JSON.parse(atob(token.split(".")[1])); // now contains role
+      user = JSON.parse(atob(token.split(".")[1])); // decode JWT
     } catch {}
   }
 
-  const RequireAuth = ({ children }) => {
-    if (!token) return <Navigate to="/login" replace />;
-    if (user.role === "admin") return <Navigate to="/admin-dashboard" replace />; // redirect admin to admin page
-    return children;
-  };
+  if (!token) return <Navigate to="/login" replace />;        // not logged in
+  if (user?.role === "admin") return <Navigate to="/admin-dashboard" replace />; // admin cannot access student routes
 
-  const RequireAdmin = ({ children }) => {
-    if (!token || user?.role !== "admin") return <Navigate to="/login" replace />;
-    return children;
-  };
+  return <Outlet />; // render child routes
+};
 
+// RequireAdmin component for admin routes
+const RequireAdmin = () => {
+  const token = localStorage.getItem("token");
+  let user = null;
+
+  if (token) {
+    try {
+      user = JSON.parse(atob(token.split(".")[1]));
+    } catch {}
+  }
+
+  if (!token || user?.role !== "admin") return <Navigate to="/login" replace />; // not admin
+  return <Outlet />; // render child routes
+};
+
+function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-
         {/* Student Routes */}
-        <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
-        <Route path="/create" element={<RequireAuth><CreateExperience /></RequireAuth>} />
-        <Route path="/experience/:id" element={<RequireAuth><ExperienceDetails /></RequireAuth>} />
-        <Route path="/dashboard/myposts" element={<RequireAuth><MyPosts /></RequireAuth>} />
-        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+        <Route element={<RequireAuth />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create" element={<CreateExperience />} />
+          <Route path="/experience/:id" element={<ExperienceDetails />} />
+          <Route path="/dashboard/myposts" element={<MyPosts />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
 
         {/* Admin Routes */}
-        <Route path="/admin-dashboard" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
-        <Route path="/admin/experience/:id" element={<RequireAdmin><AdminExperienceDetails /></RequireAdmin>}/>
-        {/* Redirect unknown routes */}
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/experience/:id" element={<AdminExperienceDetails />} />
+        </Route>
+
+        {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

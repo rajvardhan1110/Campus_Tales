@@ -88,7 +88,7 @@ const AdminDashboard = () => {
       (filter.studentName ? exp.student?.name.toLowerCase().includes(filter.studentName.toLowerCase()) : true) &&
       (filter.companyName ? exp.companyName.toLowerCase().includes(filter.companyName.toLowerCase()) : true) &&
       (filter.type ? exp.type === filter.type : true) &&
-      (filter.year ? ((exp.year && exp.year === filter.year) || (exp.student?.year && exp.student.year === filter.year)) : true) &&
+      (filter.year ? ((exp.year && exp.year === filter.year)) : true) &&
       (filter.branch ? exp.branch === filter.branch : true) &&
       (filter.passoutYear ? exp.passoutYear === filter.passoutYear : true) &&
       (filter.placementType ? exp.placementType === filter.placementType : true) &&
