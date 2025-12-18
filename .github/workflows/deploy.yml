@@ -35,10 +35,11 @@ jobs:
             cd backend
 
             echo "🔹 Create / override backend .env"
+            
             cat << 'EOF' > .env
             ${{ secrets.BACKEND_ENV }}
             EOF
-            
+
             # echo "${{ secrets.BACKEND_ENV }}" > .env
 
             echo "🔹 Install backend dependencies"
