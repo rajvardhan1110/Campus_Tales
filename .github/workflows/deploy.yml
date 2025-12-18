@@ -97,4 +97,4 @@ jobs:
             sudo systemctl reload nginx
 
             # Optional cleanup
-            rm -rf ~/dist
+            # rm -rf ~/dist
