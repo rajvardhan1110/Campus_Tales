@@ -2,8 +2,7 @@ name: Campus Tales Full Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: main
 
 jobs:
   deploy:
