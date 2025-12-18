@@ -17,42 +17,46 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
 
       - name: Build frontend
         run: |
           cd frontend
-          
-          cat << EOF > config.js 
-          ${{ secrets.FRONTEND_CONFIG_JS }}
-          EOF
-
+          echo "${{ secrets.FRONTEND_CONFIG_JS }}" > config.js
           npm install
           npm run build
 
-      - name: Upload frontend build
+      - name: Upload frontend build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
           path: frontend/dist
 
-
   # ================= DEPLOY =================
   deploy:
     name: Deploy Backend + Frontend
     runs-on: ubuntu-latest
-
-    # 
     needs: build-frontend
 
     steps:
-      - name: Download frontend build
+      - name: Download frontend build artifact
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
           path: dist
 
-      - name: Deploy to Server
+      # Copy frontend dist to server
+      - name: Copy frontend build to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "dist/*"
+          target: "/home/${{ secrets.SERVER_USER }}/dist"
+
+      # SSH deploy backend and move frontend
+      - name: Deploy backend + frontend on server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -89,3 +93,6 @@ jobs:
             sudo rm -rf /var/www/html/*
             sudo cp -r ~/dist/* /var/www/html/
             sudo systemctl reload nginx
+
+            # Optional cleanup
+            rm -rf ~/dist
