@@ -93,7 +93,7 @@ jobs:
             # ========== FRONTEND ==========
             echo "🔹 Deploy frontend"
             sudo rm -rf /var/www/html/*
-            sudo cp -r ~/dist/* /var/www/html/
+            sudo cp -r ~/dist/dist/* /var/www/html/
             sudo systemctl reload nginx
 
             # Optional cleanup
