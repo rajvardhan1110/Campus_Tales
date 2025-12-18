@@ -5,11 +5,50 @@ on:
     branches: main
 
 jobs:
-  deploy:
+  # ================= FRONTEND BUILD =================
+  build-frontend:
+    name: Build Frontend
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy Campus_Tales (Frontend + Backend)
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          echo "${{ secrets.FRONTEND_CONFIG_JS }}" > config.js
+          npm install
+          npm run build
+
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+
+
+  # ================= DEPLOY =================
+  deploy:
+    name: Deploy Backend + Frontend
+    runs-on: ubuntu-latest
+
+    # 
+    needs: build-frontend
+
+    steps:
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+
+      - name: Deploy to Server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -19,7 +58,7 @@ jobs:
             BASE_DIR=~/Campus_Tales
             REPO_URL=https://github.com/rajvardhan1110/Campus_Tales.git
 
-            echo "🔹 Step 1: Clone or Pull main repo"
+            echo "🔹 Clone or Pull repo"
             if [ -d "$BASE_DIR/.git" ]; then
               cd $BASE_DIR
               git pull origin main
@@ -28,48 +67,21 @@ jobs:
               cd $BASE_DIR
             fi
 
-            # ================= BACKEND =================
+            # ========== BACKEND ==========
             echo "🔹 Backend setup"
             cd backend
-
-            echo "🔹 Create / override backend .env"
-            cat << EOF > .env
-            ${{ secrets.BACKEND_ENV }}
-            EOF
-
-            echo "🔹 Install backend dependencies"
+            echo "${{ secrets.BACKEND_ENV }}" > .env
             npm install
 
-            echo "🔹 Install PM2 if not present"
             if ! command -v pm2 &> /dev/null; then
               sudo npm install -g pm2
             fi
 
-            echo "🔹 Restart or start backend"
-            if pm2 list | grep -q campus-backend; then
-              pm2 restart campus-backend
-            else
-              pm2 start server.js --name campus-backend
-            fi
-
+            pm2 restart campus-backend || pm2 start server.js --name campus-backend
             pm2 save
 
-            # ================= FRONTEND =================
-            echo "🔹 Frontend setup"
-            cd ../frontend
-
-            echo "🔹 Create / override frontend config.js"
-            cat << EOF > config.js
-            ${{ secrets.FRONTEND_CONFIG_JS }}
-            EOF
-
-            echo "🔹 Install frontend dependencies"
-            npm install
-
-            echo "🔹 Build frontend"
-            npm run build
-
-            echo "🔹 Deploy frontend to Nginx"
+            # ========== FRONTEND ==========
+            echo "🔹 Deploy frontend"
             sudo rm -rf /var/www/html/*
-            sudo cp -r dist/* /var/www/html/
+            sudo cp -r ~/dist/* /var/www/html/
             sudo systemctl reload nginx
