@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Deploy Campus_Tales (Frontend + Backend)
         uses: appleboy/ssh-action@v1
-        env:
-            FRONTEND_CONFIG_JS: ${{ secrets.FRONTEND_CONFIG_JS }}
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
@@ -35,12 +33,9 @@ jobs:
             cd backend
 
             echo "🔹 Create / override backend .env"
-            
             cat << EOF > .env
             ${{ secrets.BACKEND_ENV }}
             EOF
-
-            # echo "${{ secrets.BACKEND_ENV }}" > .env
 
             echo "🔹 Install backend dependencies"
             npm install
@@ -57,7 +52,6 @@ jobs:
               pm2 start server.js --name campus-backend
             fi
 
-
             pm2 save
 
             # ================= FRONTEND =================
@@ -65,12 +59,9 @@ jobs:
             cd ../frontend
 
             echo "🔹 Create / override frontend config.js"
-
-            cat << 'EOF' > config.js
+            cat << EOF > config.js
             ${{ secrets.FRONTEND_CONFIG_JS }}
             EOF
-
-           
 
             echo "🔹 Install frontend dependencies"
             npm install
@@ -81,5 +72,4 @@ jobs:
             echo "🔹 Deploy frontend to Nginx"
             sudo rm -rf /var/www/html/*
             sudo cp -r dist/* /var/www/html/
-
             sudo systemctl reload nginx
