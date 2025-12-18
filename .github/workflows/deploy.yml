@@ -48,7 +48,7 @@ jobs:
             if pm2 list | grep -q campus-backend; then
               pm2 restart campus-backend
             else
-              pm2 start index.js --name campus-backend
+              pm2 start server.js --name campus-backend
             fi
 
 
