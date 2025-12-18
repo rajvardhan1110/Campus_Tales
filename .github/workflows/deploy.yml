@@ -1,0 +1,75 @@
+name: Campus Tales Full Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Campus_Tales (Frontend + Backend)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            BASE_DIR=~/Campus_Tales
+            REPO_URL=https://github.com/rajvardhan1110/Campus_Tales.git
+
+            echo "🔹 Step 1: Clone or Pull main repo"
+            if [ -d "$BASE_DIR/.git" ]; then
+              cd $BASE_DIR
+              git pull origin main
+            else
+              git clone $REPO_URL $BASE_DIR
+              cd $BASE_DIR
+            fi
+
+            # ================= BACKEND =================
+            echo "🔹 Backend setup"
+            cd backend
+
+            echo "🔹 Create / override backend .env"
+            echo "${{ secrets.BACKEND_ENV }}" > .env
+
+            echo "🔹 Install backend dependencies"
+            npm install
+
+            echo "🔹 Install PM2 if not present"
+            if ! command -v pm2 &> /dev/null; then
+              sudo npm install -g pm2
+            fi
+
+            echo "🔹 Restart or start backend"
+            if pm2 list | grep -q campus-backend; then
+              pm2 restart campus-backend
+            else
+              pm2 start index.js --name campus-backend
+            fi
+
+            pm2 save
+
+            # ================= FRONTEND =================
+            echo "🔹 Frontend setup"
+            cd ../frontend
+
+            echo "🔹 Create / override frontend config.js"
+            cat << 'EOF' > config.js
+            ${{ secrets.FRONTEND_CONFIG_JS }}
+            EOF
+
+            echo "🔹 Install frontend dependencies"
+            npm install
+
+            echo "🔹 Build frontend"
+            npm run build
+
+            echo "🔹 Deploy frontend to Nginx"
+            sudo rm -rf /var/www/html/*
+            sudo cp -r dist/* /var/www/html/
+
+            sudo systemctl reload nginx
