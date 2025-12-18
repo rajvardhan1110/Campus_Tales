@@ -22,7 +22,11 @@ jobs:
       - name: Build frontend
         run: |
           cd frontend
-          echo "${{ secrets.FRONTEND_CONFIG_JS }}" > config.js
+          
+          cat << EOF > config.js 
+          ${{ secrets.FRONTEND_CONFIG_JS }}
+          EOF
+
           npm install
           npm run build
 
