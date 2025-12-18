@@ -58,9 +58,11 @@ jobs:
             cd ../frontend
 
             echo "🔹 Create / override frontend config.js"
-            cat << 'EOF' > config.js
-            ${{ secrets.FRONTEND_CONFIG_JS }}
-            EOF
+            # cat << 'EOF' > config.js
+            # ${{ secrets.FRONTEND_CONFIG_JS }}
+            # EOF
+
+            echo "${{secrets.FRONTEND_CONFIG_JS}}" > config.js
 
             echo "🔹 Install frontend dependencies"
             npm install
