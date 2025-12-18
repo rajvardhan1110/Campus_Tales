@@ -36,7 +36,7 @@ jobs:
 
             echo "🔹 Create / override backend .env"
             
-            cat << 'EOF' > .env
+            cat << EOF > .env
             ${{ secrets.BACKEND_ENV }}
             EOF
 
