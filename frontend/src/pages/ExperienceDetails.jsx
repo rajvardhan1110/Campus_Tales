@@ -66,7 +66,7 @@ const ExperienceDetails = () => {
 
         // ✅ Owner → stay, show warning, use passed data
         if (ownerPost && ownerPost.student?._id === currentUserId) {
-          alert("This experience is not approved yet");
+          // alert("This experience is not approved yet");
           setExperience(ownerPost);
           return;
         }
