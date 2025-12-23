@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   backend:
-    image: rajvardhan1110/Campus-Tales-Backend:latest
+    image: rajvardhan1110/campus-tales-backend:latest
     container_name: campus-backend
     env_file:
       - .env
@@ -11,7 +11,7 @@ services:
     restart: always
 
   frontend:
-    image: rajvardhan1110/Campus-Tales-Frontend:latest
+    image: rajvardhan1110/campus-tales-frontend:latest
     container_name: campus-frontend
     ports:
       - "80:80"
