@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   backend:
     image: rajvardhan1110/campus-tales-backend:latest
