@@ -24,7 +24,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./backend
-          dockerfile: ./backend/Dockerfile
+          file: ./backend/Dockerfile
           push: true
           tags: |
             rajvardhan1110/campus-tales-backend:latest
@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./frontend
-          dockerfile: ./frontend/Dockerfile
+          file: ./frontend/Dockerfile
           push: true
           tags: |
             rajvardhan1110/campus-tales-frontend:latest
