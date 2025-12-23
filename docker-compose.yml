@@ -3,7 +3,7 @@ services:
     image: rajvardhan1110/campus-tales-backend:latest
     container_name: campus-backend
     env_file:
-      - .env
+      - ./backend/.env
     ports:
       - "3000:3000"
     restart: always
