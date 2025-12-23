@@ -46,15 +46,17 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            mkdir Project
+            mkdir -p ~/Project
             cd ~/Project
 
             echo "${{ secrets.BACKEND_ENV }}" > .env
 
-            curl -o https://github.com/rajvardhan1110/Campus_Tales/docker-compose.yml
+            curl -L -o docker-compose.yml \
+            https://raw.githubusercontent.com/rajvardhan1110/Campus_Tales/main/docker-compose.yml
 
             docker compose pull
             docker compose up -d
+
 
 
 
