@@ -1,100 +1,66 @@
-name: Campus Tales Full Deploy
+name: Campus Tales Docker Deploy
 
 on:
   push:
-    branches: main
+    branches:
+      - main
 
 jobs:
-  # ================= FRONTEND BUILD =================
-  build-frontend:
-    name: Build Frontend
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # ---------------- Checkout ----------------
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
         with:
-          node-version: 20
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build frontend
-        run: |
-          cd frontend
-          cat << EOF > config.js
-          ${{ secrets.FRONTEND_CONFIG_JS }}
-          EOF
-          npm install
-          npm run build
-
-      - name: Upload frontend build artifact
-        uses: actions/upload-artifact@v4
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v4
         with:
-          name: frontend-dist
-          path: frontend/dist
+          context: ./backend
+          dockerfile: ./backend/Dockerfile
+          push: true
+          tags: |
+            rajvardhan1110/Campus-Tales-Backend:latest
 
-  # ================= DEPLOY =================
-  deploy:
-    name: Deploy Backend + Frontend
-    runs-on: ubuntu-latest
-    needs: build-frontend
-
-    steps:
-      - name: Download frontend build artifact
-        uses: actions/download-artifact@v4
+      - name: Build and Push Frontend Image
+        uses: docker/build-push-action@v4
         with:
-          name: frontend-dist
-          path: dist
+          context: ./frontend
+          dockerfile: ./frontend/Dockerfile
+          push: true
+          tags: |
+            rajvardhan1110/Campus-Tales-Frontend:latest
 
-      # Copy frontend dist to server
-      - name: Copy frontend build to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "dist/*"
-          target: "/home/${{ secrets.SERVER_USER }}/dist"
-
-      # SSH deploy backend and move frontend
-      - name: Deploy backend + frontend on server
+      # ---------------- Deploy on Server ----------------
+      - name: Deploy on Server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            BASE_DIR=~/Campus_Tales
-            REPO_URL=https://github.com/rajvardhan1110/Campus_Tales.git
+            mkdir Project
+            cd ~/Project
 
-            echo "🔹 Clone or Pull repo"
-            if [ -d "$BASE_DIR/.git" ]; then
-              cd $BASE_DIR
-              git pull origin main
-            else
-              git clone $REPO_URL $BASE_DIR
-              cd $BASE_DIR
-            fi
-
-            # ========== BACKEND ==========
-            echo "🔹 Backend setup"
-            cd backend
             echo "${{ secrets.BACKEND_ENV }}" > .env
-            npm install
 
-            if ! command -v pm2 &> /dev/null; then
-              sudo npm install -g pm2
-            fi
+            curl -o https://github.com/rajvardhan1110/Campus_Tales/docker-compose.yml
 
-            pm2 restart campus-backend || pm2 start server.js --name campus-backend
-            pm2 save
+            docker compose pull
+            docker compose up -d
 
-            # ========== FRONTEND ==========
-            echo "🔹 Deploy frontend"
-            sudo rm -rf /var/www/html/*
-            sudo cp -r ~/dist/dist/* /var/www/html/
-            sudo systemctl reload nginx
 
-            # Optional cleanup
-            # rm -rf ~/dist
+
+
+
+
+
+
+            
