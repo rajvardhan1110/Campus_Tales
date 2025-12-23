@@ -26,8 +26,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: |
-            rajvardhan1110/campus-tales-backend:latest
+          tags: rajvardhan1110/campus-tales-backend:latest
 
       - name: Build and Push Frontend Image
         uses: docker/build-push-action@v4
@@ -35,8 +34,8 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: |
-            rajvardhan1110/campus-tales-frontend:latest
+          tags: rajvardhan1110/campus-tales-frontend:latest
+
 
       # ---------------- Deploy on Server ----------------
       - name: Deploy on Server
